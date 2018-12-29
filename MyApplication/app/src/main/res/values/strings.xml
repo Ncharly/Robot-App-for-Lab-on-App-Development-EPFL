@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Robot App</string>
+    <string name="Start">START</string>
+    <string name="Up">Up</string>
+    <string name="Down">Down</string>
+    <string name="Left">Left</string>
+    <string name="Right">Right</string>
+    <string name="Stop">STOP</string>
+    <string name="Connect">CONNECT</string>
+    <string name="WelcomeMessage">Welcome to the Robot App!</string>
+    <string name="SelectMode">Select Mode</string>
+    <string name="Manual">MANUAL</string>
+    <string name="Automatic">AUTOMATIC</string>
 </resources>
