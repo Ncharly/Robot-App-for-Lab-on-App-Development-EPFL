@@ -7,6 +7,7 @@ import android.view.View;
 
 public class PresentationActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -15,6 +16,13 @@ public class PresentationActivity extends AppCompatActivity {
 
     public void StartManual(View view) {
         Intent manualActivity = new Intent(PresentationActivity.this, MainActivity.class);
+        manualActivity.putExtra(ManualFragment.MANUAL, true);
         startActivity(manualActivity);
+    }
+
+    public void StartAutomatic(View view){
+        Intent automaticActivity = new Intent(PresentationActivity.this, MainActivity.class);
+        automaticActivity.putExtra(ManualFragment.MANUAL, false);
+        startActivity(automaticActivity);
     }
 }

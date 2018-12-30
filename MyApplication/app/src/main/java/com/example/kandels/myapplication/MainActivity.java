@@ -1,17 +1,45 @@
 package com.example.kandels.myapplication;
 
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ManualFragment.OnFragmentInteractionListener, AutomaticFragment.OnFragmentInteractionListener{
+
+    private boolean mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LinearLayout fragContainer = findViewById(R.id.FragmentLinearLayout);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+
+        Intent intent = getIntent();
+        mode = intent.getBooleanExtra(ManualFragment.MANUAL, true);
+
+        if(mode) {
+            ManualFragment myManualFragment;
+            myManualFragment = new ManualFragment();
+            ft.add(fragContainer.getId(), myManualFragment, null);
+        }
+
+        else {
+            AutomaticFragment myAutomaticFragment;
+            myAutomaticFragment = new AutomaticFragment();
+            ft.add(fragContainer.getId(), myAutomaticFragment, null);
+        }
+
+        ft.commit();
     }
 
     public void UpMovement(View view) {
@@ -63,4 +91,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void AutomaticMovement(View view) {
+        Button button_auto = findViewById(R.id.button_auto);
+
+        if(button_auto.getText()==getString(R.string.Start)){
+            view.setBackgroundColor(Color.RED);
+            button_auto.setText(getString(R.string.Stop));
+        }
+        else {
+            view.setBackgroundColor(getResources().getColor(R.color.Orange));
+            button_auto.setText(getString(R.string.Start));
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

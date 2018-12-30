@@ -19,115 +19,11 @@
             android:orientation="vertical"></LinearLayout>
 
         <LinearLayout
+            android:id="@+id/FragmentLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/holo_blue_dark"
-                    android:padding="1sp">
-
-                    <Button
-                        android:id="@+id/button_up"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/OrangeDark"
-                        android:onClick="UpMovement"
-                        android:text="@string/Up"
-                        android:textSize="24sp" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/holo_blue_dark"
-                    android:padding="1sp">
-
-                    <Button
-                        android:id="@+id/button_down"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/OrangeDark"
-                        android:onClick="DownMovement"
-                        android:text="@string/Down"
-                        android:textSize="24sp" />
-                </FrameLayout>
-
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
-                android:padding="1sp">
-
-                <Button
-                    android:id="@+id/button_start"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/Orange"
-                    android:onClick="StartMovement"
-                    android:text="@string/Start"
-                    android:textSize="24sp" />
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/holo_blue_dark"
-                    android:padding="1sp">
-
-                    <Button
-                        android:id="@+id/button_right"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/OrangeDark"
-                        android:onClick="RightMovement"
-                        android:text="@string/Right"
-                        android:textSize="24sp" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/holo_blue_dark"
-                    android:padding="1sp">
-
-                    <Button
-                        android:id="@+id/button_left"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/OrangeDark"
-                        android:onClick="LeftMovement"
-                        android:text="@string/Left"
-                        android:textSize="24sp" />
-                </FrameLayout>
-            </LinearLayout>
 
         </LinearLayout>
 
