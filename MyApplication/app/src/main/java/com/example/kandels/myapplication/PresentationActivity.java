@@ -1,12 +1,14 @@
 package com.example.kandels.myapplication;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
 public class PresentationActivity extends AppCompatActivity {
 
+    private static final int SCAN_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,5 +26,19 @@ public class PresentationActivity extends AppCompatActivity {
         Intent automaticActivity = new Intent(PresentationActivity.this, MainActivity.class);
         automaticActivity.putExtra(ManualFragment.MANUAL, false);
         startActivity(automaticActivity);
+    }
+
+    public void StartConnection(View view) {
+        Intent scanActivity = new Intent(PresentationActivity.this, DeviceScanActivity.class);
+        startActivityForResult(scanActivity, SCAN_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==SCAN_CODE && resultCode==RESULT_OK){
+
+        }
     }
 }

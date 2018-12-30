@@ -51,6 +51,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1.1"
                 android:background="@android:color/holo_red_light"
+                android:onClick="StartConnection"
                 android:text="@string/Connect"
                 android:textSize="24sp" />
         </FrameLayout>
