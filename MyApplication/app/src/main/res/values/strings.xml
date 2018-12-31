@@ -33,4 +33,9 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
+    <string name="tutorial">Tutorial\n</string>
+    <string name="TutorialText1">Click on the <b><i>CONNECT</i></b> button to look for the robot and establish a connection with it.\n\nOnce we have our app connected with the robot we can choose between <b><i>MANUAL</i></b> or <b><i>AUTOMATIC</i></b> control of the robot. In the above part of the control you will see the map of the robot and in the bottom some functionalities.</string>
+    <string name="TutorialText2">\nIf <b><i>MANUAL</i></b> selected, use the different bottoms to <b>start/stop/control</b> the robot. \nIf <b><i>AUTOMATIC</i></b> selected, use <b>start/stop</b> to control the beginning and end of the movement or <b>return home</b> to make the robot go to the initial position</string>
+    <string name="TutorialText3">\nThe <b>map</b> represents in a Matrix-like representation the surroundings of the position of the robot. In green... In blue...\n</string>
+
 </resources>

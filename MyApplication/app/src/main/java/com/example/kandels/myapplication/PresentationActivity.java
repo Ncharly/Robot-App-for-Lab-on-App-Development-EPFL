@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 public class PresentationActivity extends AppCompatActivity {
@@ -14,6 +17,8 @@ public class PresentationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_presentation);
+
+
     }
 
     public void StartManual(View view) {
@@ -33,12 +38,36 @@ public class PresentationActivity extends AppCompatActivity {
         startActivityForResult(scanActivity, SCAN_CODE);
     }
 
+    public void ShowTutorial() {
+        Intent tutorialActivity = new Intent(PresentationActivity.this, TutorialActivity.class);
+        startActivity(tutorialActivity);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode==SCAN_CODE && resultCode==RESULT_OK){
 
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_manual, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_tutorial:
+                ShowTutorial();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
