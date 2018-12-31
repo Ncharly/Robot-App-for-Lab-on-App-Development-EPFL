@@ -28,7 +28,6 @@
         <activity
             android:name=".DeviceScanActivity"
             android:theme="@android:style/Theme.Holo.Light" />
-        <activity android:name=".DeviceControlActivity" />
 
         <service
             android:name=".BluetoothLeService"

@@ -13,6 +13,9 @@ public class PresentationActivity extends AppCompatActivity {
 
     private static final int SCAN_CODE = 1;
 
+    private String deviceAddress;
+    private String deviceName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,9 @@ public class PresentationActivity extends AppCompatActivity {
     public void StartManual(View view) {
         Intent manualActivity = new Intent(PresentationActivity.this, MainActivity.class);
         manualActivity.putExtra(ManualFragment.MANUAL, true);
+        manualActivity.putExtra(MainActivity.EXTRAS_DEVICE_ADDRESS, deviceAddress);
+        manualActivity.putExtra(MainActivity.EXTRAS_DEVICE_NAME, deviceAddress);
+
         startActivity(manualActivity);
     }
 
@@ -48,7 +54,8 @@ public class PresentationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode==SCAN_CODE && resultCode==RESULT_OK){
-
+            deviceName = data.getStringExtra(MainActivity.EXTRAS_DEVICE_NAME);
+            deviceAddress = data.getStringExtra(MainActivity.EXTRAS_DEVICE_ADDRESS);
         }
     }
 

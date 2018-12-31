@@ -148,8 +148,7 @@ public class DeviceScanActivity extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
         // User chose not to enable Bluetooth.
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity
-                .RESULT_CANCELED) {
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
             finish();
             return;
         }
@@ -168,9 +167,9 @@ public class DeviceScanActivity extends ListActivity {
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
         if (device == null) return;
         final Intent intent = new Intent();
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device
+        intent.putExtra(MainActivity.EXTRAS_DEVICE_NAME, device
                 .getName());
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device
+        intent.putExtra(MainActivity.EXTRAS_DEVICE_ADDRESS, device
                 .getAddress());
         if (mScanning) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
