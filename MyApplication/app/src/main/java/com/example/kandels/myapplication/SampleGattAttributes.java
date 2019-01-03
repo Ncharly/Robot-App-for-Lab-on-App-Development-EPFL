@@ -25,6 +25,10 @@ public class SampleGattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
     public static String HEART_RATE_MEASUREMENT = "00002a37-0000-1000-8000-00805f9b34fb";
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+    public static String ROBOT_MODE = "0000fff1-0000-1000-8000-00805f9b34fb";
+    public static String BUMP_SWITCH = "0000fff2-0000-1000-8000-00805f9b34fb";
+    public static String ROBOT_SPEED = "0000fff3-0000-1000-8000-00805f9b34fb";
+    public static String ROBOT_SENSOR = "0000fff6-0000-1000-8000-00805f9b34fb";
 
     static {
         // Sample Services.
@@ -33,6 +37,10 @@ public class SampleGattAttributes {
         // Sample Characteristics.
         attributes.put(HEART_RATE_MEASUREMENT, "Heart Rate Measurement");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String");
+        attributes.put(ROBOT_MODE, "Jacki command");
+        attributes.put(BUMP_SWITCH, "Bump switches");
+        attributes.put(ROBOT_SPEED, "Jacki speed");
+        attributes.put(ROBOT_SENSOR, "Jacki sensors");
     }
 
     public static String lookup(String uuid, String defaultName) {

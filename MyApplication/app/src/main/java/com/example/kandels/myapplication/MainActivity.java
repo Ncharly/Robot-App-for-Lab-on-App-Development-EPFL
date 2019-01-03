@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public BluetoothGattCharacteristic JackiPowerCharacteristic;  // 0000fff3-0000-1000-8000-00805f9b34fb
     public BluetoothGattCharacteristic JackiSensorCharacteristic; // 0000fff6-0000-1000-8000-00805f9b34fb
 
-    /public final static UUID UUID_ROBOT_SENSOR =
+    public final static UUID UUID_ROBOT_SENSOR =
             UUID.fromString(SampleGattAttributes.ROBOT_SENSOR);
 
 

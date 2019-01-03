@@ -416,5 +416,5 @@ public class BluetoothLeService extends Service {
     }
     public int getJackiBumpSensors(){
         return JackiBumpSensors;
-    }v
+    }
 }
