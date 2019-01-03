@@ -33,6 +33,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements ManualFragment.OnFragmentInteractionListener, AutomaticFragment.OnFragmentInteractionListener{
 
     private boolean mode;
+    public boolean mRunning;
     private final static String TAG = MainActivity.class.getSimpleName();
 
     //BLE
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         boolean bError = true;
+        mRunning = false;
 
         // Start robot control screen in response to button
         // start only if connected to a Jacki RSLK with the correct version of ASEE running
@@ -338,29 +340,87 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     // MANUAL
 
+    //TODO: copy the readsensors and updatesensors once we have them in the fuckin robot
+
     public void UpMovement(View view) {
-        Button button_down = findViewById(R.id.button_down);
+        Button button_down = findViewById(R.id.button_up);
         view.setBackgroundColor(Color.YELLOW);
         button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        TextView textView = findViewById(R.id.button_start);
+
+        if (!mRunning) {
+            textView.setText("Halt");
+
+            //     statusView.setText("Running");
+            mRunning = true;
+            byte data[] ={1}; // go command
+            JackiModeCharacteristic.setValue(data);
+            // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+            mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
+        }else {
+            textView.setText("Go");
+            //    statusView.setText("Halted");
+            mRunning = false;
+            byte data[] ={0}; // stop command
+            JackiModeCharacteristic.setValue(data);
+            // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+            mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
+        }
+        //UpdateSensorStatus();
+        //ReadSensors();
     }
 
     public void DownMovement(View view) {
-        Button button_up = findViewById(R.id.button_up);
+        Button button_up = findViewById(R.id.button_down);
         view.setBackgroundColor(Color.YELLOW);
         button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        TextView textView = findViewById(R.id.button_start);
+        textView.setText("Halt");
+        mRunning = true;
+        byte data[] ={2}; // back command
+        VerifyConnection();  // back sure Jacki is connected
+        JackiModeCharacteristic.setValue(data);
+        //       JackiModeCharacteristic.setWriteType(JackiModeCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
+        //UpdateSensorStatus();
     }
 
     public void RightMovement(View view) {
-        Button button_left = findViewById(R.id.button_left);
+        Button button_left = findViewById(R.id.button_right);
         view.setBackgroundColor(Color.YELLOW);
         button_left.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //   TextView statusView = findViewById(R.id.status);
+        //   statusView.setText("Right");
+        TextView textView = findViewById(R.id.button_start);
+        textView.setText("Halt");
+        mRunning = true;
+        byte data[] ={3}; // hard right
+        VerifyConnection();  // back sure Jacki is connected
+        JackiModeCharacteristic.setValue(data);
+        //  JackiModeCharacteristic.setWriteType(JackiModeCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
+        //UpdateSensorStatus();
+        // ReadSensors();
     }
 
     public void LeftMovement(View view) {
-        Button button_right = findViewById(R.id.button_right);
+        Button button_right = findViewById(R.id.button_left);
         view.setBackgroundColor(Color.YELLOW);
         button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //  TextView statusView = findViewById(R.id.status);
+        //  statusView.setText("Left");
+        TextView textView = findViewById(R.id.button_start);
+        textView.setText("Halt");
+        mRunning = true;
+        byte data[] ={4}; // left command
+        VerifyConnection();  // back sure Jacki is connected
+        JackiModeCharacteristic.setValue(data);
+        // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
+        //UpdateSensorStatus();
+        //     ReadSensors();
     }
+
 
     public void StartMovement(View view) {
         Button button_start = findViewById(R.id.button_start);
