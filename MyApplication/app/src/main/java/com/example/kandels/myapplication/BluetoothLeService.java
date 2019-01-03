@@ -48,6 +48,13 @@ public class BluetoothLeService extends Service {
     private BluetoothGatt mBluetoothGatt;
     private int mConnectionState = STATE_DISCONNECTED;
 
+    private int JackiMode;        // 0 to 6
+    private int JackiLeftPower;   // duty cycle to left motor (0 to 14990)
+    private int JackiRightPower;  // duty cycle to right motor (0 to 14990)
+    private int JackiBumpSensors; // 6=bit binary (1 means crash, bit 5 on left, bit 0 on right)
+    private int JackiLeftDistance ; // in mm
+    private int JackiCenterDistance; // in mm
+    private int JackiRightDistance; // in mm
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
@@ -65,6 +72,15 @@ public class BluetoothLeService extends Service {
 
     public final static UUID UUID_HEART_RATE_MEASUREMENT =
             UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
+
+    public final static UUID UUID_ROBOT_MODE =
+            UUID.fromString(SampleGattAttributes.ROBOT_MODE);
+    public final static UUID UUID_BUMP_SWITCH =
+            UUID.fromString(SampleGattAttributes.BUMP_SWITCH);
+    public final static UUID UUID_ROBOT_SPEED =
+            UUID.fromString(SampleGattAttributes.ROBOT_SPEED);
+    public final static UUID UUID_ROBOT_SENSOR =
+            UUID.fromString(SampleGattAttributes.ROBOT_SENSOR);
 
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
@@ -126,6 +142,7 @@ public class BluetoothLeService extends Service {
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
         // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
+        // the Heart Rate case is not used, we left it in the code as a template for possible future expansion
         if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
             int flag = characteristic.getProperties();
             int format = -1;
@@ -138,7 +155,76 @@ public class BluetoothLeService extends Service {
             }
             final int heartRate = characteristic.getIntValue(format, 1);
             Log.d(TAG, String.format("Received heart rate: %d", heartRate));
-            intent.putExtra(EXTRA_DATA, heartRate);
+            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
+        }
+        if (UUID_ROBOT_MODE.equals(characteristic.getUuid())) {
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length > 0) {
+                byte byteChar = data[0];
+                JackiMode = byteChar; // store mode for later access
+                if(byteChar == 0) {
+                    intent.putExtra(EXTRA_DATA,  "Jacki is stopped" );
+                }else if(byteChar == 1) {
+                    intent.putExtra(EXTRA_DATA,  "Jacki is running" );
+                }else if(byteChar == 2) {
+                    intent.putExtra(EXTRA_DATA,  "Jacki is backing up" );
+                }else if(byteChar == 3) {
+                    intent.putExtra(EXTRA_DATA,  "Hard right turn" );
+                }else if(byteChar == 4) {
+                    intent.putExtra(EXTRA_DATA,  "Hard left turn" );
+                }else if(byteChar == 5) {
+                    intent.putExtra(EXTRA_DATA,  "Gentle right turn" );
+                }else if(byteChar == 6) {
+                    intent.putExtra(EXTRA_DATA,  "Gentle left turn" );
+                }
+            }
+        } else
+        if (UUID_BUMP_SWITCH.equals(characteristic.getUuid())) {
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length > 0) {
+                final StringBuilder stringBuilder = new StringBuilder(0);
+                byte byteChar = data[0];
+                JackiBumpSensors = byteChar;
+                // 6=bit binary (1 means crash, bit 5 on left, bit 0 on right)
+                for(int x = 0; x < 6; x = x + 1) {
+                    if((byteChar&(1<<x)) != (1<<x) ) {
+                        stringBuilder.append(String.format("%1d", x));
+                    }else{
+                        stringBuilder.append(" ");
+                    }
+                }
+                intent.putExtra(EXTRA_DATA, "bumpers= " + stringBuilder.toString());
+            }
+        } else if (UUID_ROBOT_SPEED.equals(characteristic.getUuid())) {
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length > 0) {
+                final StringBuilder stringBuilder = new StringBuilder(0);
+                int low,high;
+                low = data[3]&0xff;
+                high = data[2]&0xff;
+                JackiLeftPower = high * 256 + low; // 0 to 14998 out of 15000
+                low = data[1]&0xff;
+                high = data[0]&0xff;
+                JackiRightPower = high * 256 + low; // 0 to 14998 out of 15000
+                stringBuilder.append(String.format("left PWM =%d, right PWM =%d", JackiLeftPower, JackiRightPower));
+                intent.putExtra(EXTRA_DATA, stringBuilder.toString());
+            }
+        } else if (UUID_ROBOT_SENSOR.equals(characteristic.getUuid())) {
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length == 8) {
+                final StringBuilder stringBuilder = new StringBuilder(0);
+                int low;
+                low = data[7]&0xff;
+                JackiLeftDistance   = data[6] * 256 + low; // in mm
+                low = data[5]&0xff;
+                JackiCenterDistance = data[4] * 256 + low; // in mm
+                low = data[3]&0xff;
+                JackiRightDistance  = data[2] * 256 + low; // in mm
+                JackiBumpSensors = data[1]; // 6-bit binary
+                JackiMode = data[0];
+                stringBuilder.append(String.format("left=%d mm, cntr=%d mm, rght=%d mm, bump=0x%02x", JackiLeftDistance,JackiCenterDistance,JackiRightDistance,JackiBumpSensors));
+                intent.putExtra(EXTRA_DATA, stringBuilder.toString());
+            }
         } else {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
@@ -316,4 +402,19 @@ public class BluetoothLeService extends Service {
 
         return mBluetoothGatt.getServices();
     }
+    public int getJackiMode(){
+        return JackiMode;
+    }
+    public int getJackiLeftDistance(){
+        return JackiLeftDistance;
+    }
+    public int getJackiCenterDistance(){
+        return JackiCenterDistance;
+    }
+    public int getJackiRightDistance(){
+        return JackiRightDistance;
+    }
+    public int getJackiBumpSensors(){
+        return JackiBumpSensors;
+    }v
 }

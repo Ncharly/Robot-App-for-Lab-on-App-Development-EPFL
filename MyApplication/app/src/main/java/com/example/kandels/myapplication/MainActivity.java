@@ -23,10 +23,12 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements ManualFragment.OnFragmentInteractionListener, AutomaticFragment.OnFragmentInteractionListener{
 
@@ -49,6 +51,15 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
+
+
+    public BluetoothGattCharacteristic JackiModeCharacteristic;   // 0000fff1-0000-1000-8000-00805f9b34fb
+    public BluetoothGattCharacteristic JackiSwitchCharacteristic; // 0000fff2-0000-1000-8000-00805f9b34fb
+    public BluetoothGattCharacteristic JackiPowerCharacteristic;  // 0000fff3-0000-1000-8000-00805f9b34fb
+    public BluetoothGattCharacteristic JackiSensorCharacteristic; // 0000fff6-0000-1000-8000-00805f9b34fb
+
+    /public final static UUID UUID_ROBOT_SENSOR =
+            UUID.fromString(SampleGattAttributes.ROBOT_SENSOR);
 
 
     // Code to manage Service lifecycle.
@@ -128,6 +139,11 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                                 mNotifyCharacteristic = null;
                             }
                             mBluetoothLeService.readCharacteristic(characteristic);
+                            if(groupPosition==3) {
+                                if(childPosition == 3) {
+                                    JackiSensorCharacteristic = mGattCharacteristics.get(3).get(3);
+                                }
+                            }
                         }
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
                             mNotifyCharacteristic = characteristic;
@@ -154,42 +170,64 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        boolean bError = true;
 
-        // BLE
-        final Intent intent = getIntent();
-        /*mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        // Start robot control screen in response to button
+        // start only if connected to a Jacki RSLK with the correct version of ASEE running
+        if(mGattCharacteristics.size() > 3) {
+            if (mGattCharacteristics.get(3).size() > 3) {
+                JackiSensorCharacteristic = mGattCharacteristics.get(3).get(3);
+                if (UUID_ROBOT_SENSOR.equals(JackiSensorCharacteristic.getUuid())) {
 
-        // Sets up UI references.
-        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
-        mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
-        mGattServicesList.setOnChildClickListener(servicesListClickListner);
-        mConnectionState = (TextView) findViewById(R.id.connection_state);
-        mDataField = (TextView) findViewById(R.id.data_value);
-        */
+                    // BLE
+                    final Intent intent = getIntent();
+                    mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
+                    mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+                    Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+                    bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        // Bottom Fragment
+                    // Sets up UI references.
+                    ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
+                    mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
+                    mGattServicesList.setOnChildClickListener(servicesListClickListner);
+                    mConnectionState = (TextView) findViewById(R.id.connection_state);
+                    mDataField = (TextView) findViewById(R.id.data_value);
 
-        LinearLayout fragContainer = findViewById(R.id.FragmentLinearLayout);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    // Bottom Fragment
 
-        mode = intent.getBooleanExtra(ManualFragment.MANUAL, true);
+                    LinearLayout fragContainer = findViewById(R.id.FragmentLinearLayout);
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-        if(mode) {
-            ManualFragment myManualFragment;
-            myManualFragment = new ManualFragment();
-            ft.add(fragContainer.getId(), myManualFragment, null);
+                    mode = intent.getBooleanExtra(ManualFragment.MANUAL, true);
+
+                    if(mode) {
+                        ManualFragment myManualFragment;
+                        myManualFragment = new ManualFragment();
+                        ft.add(fragContainer.getId(), myManualFragment, null);
+                    }
+
+                    else {
+                        AutomaticFragment myAutomaticFragment;
+                        myAutomaticFragment = new AutomaticFragment();
+                        ft.add(fragContainer.getId(), myAutomaticFragment, null);
+                    }
+
+                    ft.commit();
+
+
+                    bError = false; // ok to Launch RSLK controller
+                }
+            }
         }
 
-        else {
-            AutomaticFragment myAutomaticFragment;
-            myAutomaticFragment = new AutomaticFragment();
-            ft.add(fragContainer.getId(), myAutomaticFragment, null);
+        // No well connected to the robot
+        if(bError){
+            Toast.makeText(MainActivity.this, "Must be connected to an RSLK to run this app",
+                    Toast.LENGTH_SHORT).show();
         }
 
-        ft.commit();
+
+
     }
 
     @Override
@@ -284,6 +322,22 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         });
     }
 
+    // New Robot
+
+    private void VerifyConnection(){
+        if(JackiSensorCharacteristic==null) {
+            displayGattServices(mBluetoothLeService.getSupportedGattServices());
+            JackiModeCharacteristic = mGattCharacteristics.get(3).get(0);   // 0000fff1-0000-1000-8000-00805f9b34fb
+            JackiSwitchCharacteristic = mGattCharacteristics.get(3).get(1); // 0000fff2-0000-1000-8000-00805f9b34fb
+            JackiPowerCharacteristic = mGattCharacteristics.get(3).get(2);  // 0000fff3-0000-1000-8000-00805f9b34fb
+            JackiSensorCharacteristic = mGattCharacteristics.get(3).get(3); // 0000fff6-0000-1000-8000-00805f9b34fb
+        }
+    }
+
+
+
+    // MANUAL
+
     public void UpMovement(View view) {
         Button button_down = findViewById(R.id.button_down);
         view.setBackgroundColor(Color.YELLOW);
@@ -332,6 +386,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
 
     }
+
+    // AUTOMATIC
 
     public void AutomaticMovement(View view) {
         Button button_auto = findViewById(R.id.button_auto);
