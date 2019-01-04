@@ -18,8 +18,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -61,6 +64,30 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public final static UUID UUID_ROBOT_SENSOR =
             UUID.fromString(SampleGattAttributes.ROBOT_SENSOR);
+
+
+    // MAP
+    private FrameLayout map;
+    private int width = 750;
+    private int height = 800;
+    private int size_one_element = 5;
+    private int nb_el_width = width/size_one_element;
+    private int number_square = height * width / (size_one_element * size_one_element);
+    List<View> square_el = new ArrayList<View>();
+
+
+    ImageView robot;
+    int orientation_robot = LEFT;
+    int position_robot = 1576;
+
+    static final int STATE_UNKNOWN = 0;
+    static final int STATE_OBSTACLE = 1;
+    static final int STATE_FREE = 2;
+
+    static final int UP = 0;
+    static final int RIGHT = 1;
+    static final int DOWN = 2;
+    static final int LEFT = 3;
 
 
     // Code to manage Service lifecycle.
@@ -228,6 +255,16 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                     Toast.LENGTH_SHORT).show();
         }
 
+        map = findViewById(R.id.map);
+        robot = findViewById(R.id.robot);
+
+        initialize_map();
+        robot.bringToFront();
+        rotate(DOWN);
+
+        change_state_square(position_robot, STATE_FREE);
+
+
 
 
     }
@@ -337,6 +374,104 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
 
+
+    // MAP
+
+    void initialize_map(){
+        View square;
+        FrameLayout.LayoutParams params;
+        int left_margin = - size_one_element;
+        int top_margin = 0;
+        for(int i=0; i < number_square; i++){
+            square = new View(this);
+            params = new FrameLayout.LayoutParams(size_one_element, size_one_element);
+            square.setLayoutParams(new FrameLayout.LayoutParams(size_one_element, size_one_element));
+            square.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            if(left_margin >= width - size_one_element){
+                top_margin += size_one_element;
+                left_margin = 0;
+            }
+            else{
+                left_margin += size_one_element;
+            }
+            params.topMargin = top_margin;
+            params.leftMargin = left_margin;
+            Log.i("index square", Integer.toString(i));
+            square_el.add(i, square);
+            map.addView(square_el.get(i), params);
+        }
+
+    }
+
+    // 0 = don't know -> gray
+    // 1 = obstacle -> red
+    // 2 = free -> green
+    void change_state_square(int index, int situation){
+
+        if(situation == STATE_UNKNOWN){
+            square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        }
+        else if(situation == STATE_OBSTACLE){
+            square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+        }
+        else if(situation == STATE_FREE){
+            square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+        }
+    }
+
+    private void rotate(int direction) {
+        int degree = (direction - orientation_robot) * 90;
+        final RotateAnimation rotateAnim = new RotateAnimation(0.0f, degree,
+                RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+
+        rotateAnim.setDuration(0);
+        rotateAnim.setFillAfter(true);
+        robot.startAnimation(rotateAnim);
+        orientation_robot = direction;
+
+        int margin_left = get_marginLeft_from_index(position_robot);
+        int margin_top = get_marginTop_from_index(position_robot);
+        switch(orientation_robot){
+            case UP : margin_left -= 8;
+                margin_top -= 0;
+                break;
+            case RIGHT : margin_left -= 14;
+                margin_top -= 7;
+                break;
+            case DOWN : margin_left -= 7;
+                margin_top -= 13;
+                break;
+            case LEFT : margin_left -= 1;
+                margin_top -= 6;
+                break;
+        }
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(margin_left, margin_top, 0, 0);
+        robot.setLayoutParams(params);
+
+    }
+
+    int get_marginLeft_from_index(int index){
+        int marginLeft;
+        if(index != 0){
+            marginLeft = index%nb_el_width * size_one_element;
+        }else{
+            marginLeft = 0;
+        }
+
+        return marginLeft;
+    }
+
+    int get_marginTop_from_index(int index){
+        int marginTop;
+        if(index != 0){
+            marginTop = (int) (index / nb_el_width) * size_one_element;
+        }else{
+            marginTop = 0;
+        }
+        return marginTop;
+    }
 
     // MANUAL
 
