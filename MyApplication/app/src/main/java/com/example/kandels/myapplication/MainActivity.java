@@ -89,6 +89,11 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     static final int DOWN = 2;
     static final int LEFT = 3;
 
+    static final int NORTHERN = 0;
+    static final int SOUTHERN = 1;
+    static final int EASTERN = 2;
+    static final int WESTERN = 3;
+
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new
@@ -373,6 +378,13 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
     }
 
+    private void ReadSensors(){
+        VerifyConnection();  // back sure Jacki is connected
+        //       mBluetoothLeService.readCharacteristic(JackiModeCharacteristic);
+        //       mBluetoothLeService.readCharacteristic(JackiSwitchCharacteristic);
+        mBluetoothLeService.readCharacteristic(JackiSensorCharacteristic);
+    }
+
 
 
     // MAP
@@ -503,6 +515,11 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         //UpdateSensorStatus();
         //ReadSensors();
+
+
+
+        //add movement to firebase, NOT SURE WHERE TO PUT IT
+        //addMovementToFirebaseDB();
     }
 
     public void DownMovement(View view) {
@@ -582,10 +599,46 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
+   /* private void addProfileToFirebaseDB() {
+        profileRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData
+                                                            mutableData) {
+                mutableData.child("username").setValue(userProfile.username);
+                mutableData.child("password").setValue(userProfile.password);
+                mutableData.child("height").setValue(userProfile.height_cm);
+                mutableData.child("weight").setValue(userProfile.weight_kg);
+                return Transaction.success(mutableData);
+            }
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError,
+                                   boolean b, @Nullable DataSnapshot
+                                           dataSnapshot) {
+            }
+        });
+    } */
+
     // AUTOMATIC
+    // TODO: complete automatic path with the maze code
+
+    //================================================================
+    // Find the position of the Starting (Source) point
+    /*private int findStartingPosition() {
+        int position = position_robot;
+        for (int j = 0; j < square_el.size(); j++) { //check if correct
+            if (square_el.get(j).isStartPoint() == 1) {
+                position = j;
+            }
+        }
+        return position;
+    } */
+
+
 
     public void AutomaticMovement(View view) {
         Button button_auto = findViewById(R.id.button_auto);
+
 
         if(button_auto.getText()==getString(R.string.Start)){
             view.setBackgroundColor(Color.RED);
@@ -596,6 +649,93 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             button_auto.setText(getString(R.string.Start));
         }
     }
+
+    public void pathsolver(View view, int start, int goal) {
+        int position = start;
+
+        int positionx = get_marginLeft_from_index(position);
+        int positiony = get_marginTop_from_index(position);
+
+        int positionx_goal = get_marginLeft_from_index(goal);
+        int positiony_goal = get_marginTop_from_index(goal);
+
+        int NORTH = positiony+1;  //+ one cell from the map
+        int SOUTH = positiony-1;
+        int EAST = positionx+1;
+        int WEST = positiony-1;
+
+
+        //Begin at a state free square
+        change_state_square(position, STATE_FREE);
+
+        //Get the position of the obstacles
+        // TODO ask Jordan what the position of the obstacles are
+
+
+        //Solver
+        while(positionx!=positionx_goal && positiony!=positiony_goal) {
+
+
+            if(findPath(positionx,positiony, NORTHERN)[2]==true) {
+                positiony = NORTH;   //go north with the robot movement function
+            }
+            else {
+                if (findPath(positionx, positiony, SOUTHERN)[2] == true) {
+                    positiony = SOUTH;  //rotate the robot and go south ---> TO DO
+                }
+                if(findPath(positionx,positiony, EASTERN)[2]==true){
+                    positionx=EAST;
+                }
+                if(findPath(positionx,positiony, WESTERN)[2]==true){
+                    positionx=WEST;
+                }
+            }
+        }
+    }
+
+    public static boolean[] findPath(int positionx, int positiony, int CASE){
+
+        int pos_NORTH = positiony+1;  //+ one cell from the map
+        int pos_SOUTH = positiony-1;
+        int pos_EAST = positionx+1;
+        int pos_WEST = positiony-1;
+        boolean result = false;             //return 1 if it went nort, south etc...
+
+        //int[] position_update = new int[]{positionx, positiony, result};
+        boolean[] position_update = new boolean[]{false, false, result};
+
+        switch (CASE){
+            case NORTHERN:
+                if (pos_NORTH != 0){        //If the position in the north is different than an obstacle
+                      position_update[1]=true;                  //NEED TO CHECK THE OBSTACLE POSITIONS!!!!!
+                      result=true;
+                      break;
+                }
+            case SOUTHERN:{
+                if(pos_SOUTH != 0){
+                    position_update[1]=true;
+                    result=true;
+                    break;
+                }
+            }
+            case WESTERN:{
+                if(pos_WEST != 0){
+                    position_update[0]=true;
+                    result=true;
+                    break;
+                }
+            }
+            case EASTERN:{
+                if(pos_SOUTH != 0){
+                    position_update[0]=true;
+                    result=true;
+                    break;
+                }
+            }
+        }
+        return new boolean[] {position_update[0], position_update[1], result};
+    }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {

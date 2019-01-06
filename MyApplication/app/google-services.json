@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "507240117340",
+    "firebase_url": "https://myapplication-7f0a5.firebaseio.com",
+    "project_id": "myapplication-7f0a5",
+    "storage_bucket": "myapplication-7f0a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:507240117340:android:86580baa8392a219",
+        "android_client_info": {
+          "package_name": "com.example.kandels.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "507240117340-5r0r8h58frjbci93nniql5oi7a481ek4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kandels.myapplication",
+            "certificate_hash": "c9d7f81bda9b5661c1e82707a21a8782de0bb048"
+          }
+        },
+        {
+          "client_id": "507240117340-bttid6507sl74i514oghr4omd3l79d13.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDi2gJAFIk020hdtWXA2KxAaUdvV7tDipg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "507240117340-sq2mi6qq363so50f96a8dipami45mkig.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
