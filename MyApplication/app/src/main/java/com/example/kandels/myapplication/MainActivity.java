@@ -811,9 +811,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     } */
 
     // AUTOMATIC
-    // TODO: complete automatic path with the maze code
-
-
 
     public void AutomaticMovement(View view) {
         Button button_auto = findViewById(R.id.button_auto);
@@ -822,6 +819,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         if(button_auto.getText()==getString(R.string.Start)){
             view.setBackgroundColor(Color.RED);
             button_auto.setText(getString(R.string.Stop));
+            automatic_exploration(position_robot); //start the automatic exploration mode with the position of the
+                                                    // robot: maybe change the position
         }
         else {
             view.setBackgroundColor(getResources().getColor(R.color.Orange));
@@ -850,8 +849,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
             if(obs>=0.9){   //10 percent chance of an obstacle
 
-                //Stop the movement and turn:
-
+                //TODO: Stop the movement and turn:
                 change_state_square(position+750/5,STATE_OBSTACLE); //create an obstacle down
 
 
@@ -861,6 +859,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             }
 
             change_state_square(position, STATE_FREE); //color the square to green
+           // TODO: update the position of the robot for the exploration
 
        }
     }
@@ -881,7 +880,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                 }
             }*/
 
-    public static boolean[] findPath(int positionx, int positiony, int CASE){
+    /*public static boolean[] findPath(int positionx, int positiony, int CASE){
 
         int pos_NORTH = positiony+1;  //+ one cell from the map
         int pos_SOUTH = positiony-1;
@@ -922,8 +921,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             }
         }
         return new boolean[] {position_update[0], position_update[1], result};
-    }
-
+    } */
 
     @Override
     public void onFragmentInteraction(Uri uri) {
