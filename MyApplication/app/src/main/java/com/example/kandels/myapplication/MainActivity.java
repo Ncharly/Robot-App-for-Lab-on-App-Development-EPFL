@@ -29,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +41,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements ManualFragment.OnFragmentInteractionListener, AutomaticFragment.OnFragmentInteractionListener{
 
     private boolean mode;
+    private boolean go_back = false;
     public boolean mRunning;
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -76,9 +79,10 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private int size_one_element = 5;
     private int nb_el_width = width/size_one_element;
     private int number_square = height * width / (size_one_element * size_one_element);
-    List<View> square_el = new ArrayList<View>();
 
     List<Node> node_array = new ArrayList<Node>();
+
+    ArrayList<Integer> path_back = new ArrayList<Integer>();
 
 
     ImageView robot;
@@ -417,10 +421,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             params.topMargin = top_margin;
             params.leftMargin = left_margin;
             Log.i("index square", Integer.toString(i));
-            Node node = new Node(i, get_x_from_index(i), get_y_from_index(i));
+            Node node = new Node(i, get_x_from_index(i), get_y_from_index(i), square);
             node_array.add(i, node);
-            square_el.add(i, square);
-            map.addView(square_el.get(i), params);
+            map.addView(square, params);
         }
 
     }
@@ -429,21 +432,26 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     // 1 = obstacle -> red
     // 2 = free -> green
     void change_state_square(int index, int situation){
+        Node node = node_array.get(index);
 
         if(situation == STATE_UNKNOWN){
-            square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+           node.square.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+           node.State_robot = STATE_UNKNOWN;
+
         }
         else if(situation == STATE_OBSTACLE){
-            square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+            node.square.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+            node.State_robot = STATE_OBSTACLE;
         }
         else if(situation == STATE_FREE){
-            square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
-            node_array.get(index).setState(Node.OPEN);
+            node.square.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+            node.setState(Node.NOT_TESTED);
+            node.State_robot = STATE_FREE;
         }
     }
 
     private void rotate(int direction) {
-        int degree = (direction - orientation_robot) * 90;
+        int degree = (direction - LEFT) * 90;
         final RotateAnimation rotateAnim = new RotateAnimation(0.0f, degree,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f);
@@ -453,6 +461,13 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         robot.startAnimation(rotateAnim);
         orientation_robot = direction;
 
+        set_arrow();
+
+
+
+    }
+
+    void set_arrow(){
         int margin_left = get_marginLeft_from_index(position_robot);
         int margin_top = get_marginTop_from_index(position_robot);
         switch(orientation_robot){
@@ -472,7 +487,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(margin_left, margin_top, 0, 0);
         robot.setLayoutParams(params);
-
     }
 
     int get_marginLeft_from_index(int index){
@@ -526,6 +540,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         Node node_ini = node_array.get(index_ini);
         Node node_fin = node_array.get(index_fin);
         Node node_cur = node_array.get(index_cur);
+        node_cur.State = Node.CLOSED;
         int index_new_cur;
 
         // get 4 neighbors
@@ -554,6 +569,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             index_new_cur = index_neighbor[index_smalest_F];
         }
 
+        Log.i("index new cur", Integer.toString(index_new_cur));
+        Log.i("position", Integer.toString(position_robot));
+
 
         return index_new_cur;
     }
@@ -561,8 +579,15 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     void find_path(int index_ini, int index_fin){
         int index_cur = index_ini;
         while(index_cur != index_fin){
-            index_cur = search_next_node(index_ini, index_cur, index_fin);
+            index_cur = search_next_node(index_ini, index_fin, index_cur);
         }
+        Node node;
+        while(index_cur != index_ini){
+            node = node_array.get(index_cur).ParentNode;
+            index_cur = node.Index[0];
+            path_back.add(index_cur);
+        }
+        Collections.reverse(path_back);
     }
 
 
@@ -594,6 +619,16 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         return index_neighbor;
     }
 
+    public void GoBack(View view) {
+        if(go_back){
+            go_back = false;
+        }else{
+            go_back = true;
+            find_path(position_robot, position_initial);
+        }
+
+    }
+
 
 
 
@@ -605,10 +640,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         Button button_up = findViewById(R.id.button_up);
         view.setBackgroundColor(Color.YELLOW);
         button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
-        TextView textView = findViewById(R.id.button_start);
-        textView.setText("Halt");
-        mRunning = true;
         byte data[] ={1}; // back command
+        rotate(UP);
 
 
         /*Button button_down = findViewById(R.id.button_up);
@@ -648,10 +681,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         Button button_down = findViewById(R.id.button_down);
         view.setBackgroundColor(Color.YELLOW);
         button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
-        TextView textView = findViewById(R.id.button_start);
-        textView.setText("Halt");
-        mRunning = true;
         byte data[] ={2}; // back command
+
+        rotate(DOWN);
         /*
         VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
@@ -667,10 +699,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         button_left.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         //   TextView statusView = findViewById(R.id.status);
         //   statusView.setText("Right");
-        TextView textView = findViewById(R.id.button_start);
-        textView.setText("Halt");
-        mRunning = true;
         byte data[] ={3}; // hard right
+
+        rotate(RIGHT);
         /*
         VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
@@ -687,10 +718,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         //  TextView statusView = findViewById(R.id.status);
         //  statusView.setText("Left");
-        TextView textView = findViewById(R.id.button_start);
-        textView.setText("Halt");
-        mRunning = true;
         byte data[] ={4}; // left command
+
+        rotate(LEFT);
         /*
         VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
@@ -701,10 +731,43 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         */
     }
 
+    public void move_one_square(){
+        if(go_back){
+            int index_next = path_back.get(0);
+            path_back.remove(0);
+            position_robot = index_next;
+            set_arrow();
+
+        }else{
+            int index_neighbor = get_neighbor(position_robot, orientation_robot);
+            if(index_neighbor != -1){
+                Node node = node_array.get(index_neighbor);
+                if(node.State_robot != STATE_OBSTACLE){
+                    position_robot = index_neighbor;
+                    change_state_square(index_neighbor, STATE_FREE);
+                }
+                set_arrow();
+            }
+
+            float obs = new Random().nextInt(10);
+            Log.i("random", Float.toString(obs));
+            if(obs>=9){   //10 percent chance of an obstacle
+                index_neighbor = get_neighbor(index_neighbor, orientation_robot);
+                if(index_neighbor != -1){
+                    if(node_array.get(index_neighbor).State_robot == STATE_UNKNOWN){
+                        change_state_square(index_neighbor,STATE_OBSTACLE); //create an obstacle
+                    }
+
+                }
+            }
+        }
+    }
+
 
     public void StartMovement(View view) {
         Button button_start = findViewById(R.id.button_start);
         if(button_start.getText()==getString(R.string.Start)){
+            move_one_square();
             view.setBackgroundColor(Color.RED);
             button_start.setText(getString(R.string.Stop));
         }
@@ -866,7 +929,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public void onFragmentInteraction(Uri uri) {
 
     }
-
 
 
 

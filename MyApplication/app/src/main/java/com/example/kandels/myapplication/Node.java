@@ -1,5 +1,9 @@
 package com.example.kandels.myapplication;
 
+import android.view.View;
+
+import java.nio.charset.MalformedInputException;
+
 public class Node {
 
 
@@ -9,13 +13,15 @@ public class Node {
     public float H;
     public float F;
     public int State;
+    public int State_robot;
     public Node ParentNode;
+    public View square;
 
     static final int OPEN = 0;
     static final int CLOSED = 1;
     static final int NOT_TESTED = 2;
 
-    public Node(int index, int index_x, int index_y) {
+    public Node(int index, int index_x, int index_y, View view) {
         Index[0] = index;
         Index[1] = index_x;
         Index[2] = index_y;
@@ -24,7 +30,9 @@ public class Node {
         H = 0;
         getF();
         setState(CLOSED);
+        State_robot = MainActivity.STATE_UNKNOWN;
         ParentNode = null;
+        square = view;
     }
 
     boolean getG_H_F( Node node_cur, Node node_fin){
@@ -33,6 +41,7 @@ public class Node {
             G = Math.abs(Index[1] - node_cur.Index[1]) + Math.abs(Index[2] - node_cur.Index[2]) + node_cur.G;
             H = Math.abs(Index[1] - node_fin.Index[1]) + Math.abs(Index[2] - node_fin.Index[2]);
             getF();
+            State = OPEN;
 
         }else if(State == OPEN){
             float G_new = Math.abs(Index[1] - node_cur.Index[1]) + Math.abs(Index[2] - node_cur.Index[2]);

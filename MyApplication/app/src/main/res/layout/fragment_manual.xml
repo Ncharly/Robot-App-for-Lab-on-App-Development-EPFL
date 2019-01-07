@@ -21,7 +21,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
                 android:background="@android:color/holo_blue_dark"
                 android:padding="1sp">
 
@@ -51,6 +51,24 @@
                     android:background="@color/Orange"
                     android:onClick="StartMovement"
                     android:text="@string/Start"
+                    android:textSize="24sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@android:color/holo_blue_dark"
+                android:padding="1sp">
+
+                <Button
+                    android:id="@+id/button_go_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/Yellow"
+                    android:onClick="GoBack"
+                    android:text="@string/Go_Back"
                     android:textSize="24sp" />
             </FrameLayout>
 
