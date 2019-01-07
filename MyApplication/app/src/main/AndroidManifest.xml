@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.kandels.myapplication">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -10,6 +11,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -34,7 +36,23 @@
             android:name=".BluetoothLeService"
             android:enabled="true" />
 
-        <activity android:name=".TutorialActivity"></activity>
+        <activity android:name=".TutorialActivity" />
+        <service android:name=".WearService">
+        <intent-filter>
+            <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+            <data
+                android:host="*"
+                android:pathPrefix=""
+                android:scheme="wear" />
+        </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:host="*"
+                    android:pathPrefix=""
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
