@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+
+
 public class MainActivity extends AppCompatActivity implements ManualFragment.OnFragmentInteractionListener, AutomaticFragment.OnFragmentInteractionListener{
 
     private boolean mode;
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private int nb_el_width = width/size_one_element;
     private int number_square = height * width / (size_one_element * size_one_element);
     List<View> square_el = new ArrayList<View>();
+
+    List<Node> node_array = new ArrayList<Node>();
 
 
     ImageView robot;
@@ -412,6 +416,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             params.topMargin = top_margin;
             params.leftMargin = left_margin;
             Log.i("index square", Integer.toString(i));
+            Node node = new Node(i, get_x_from_index(i), get_y_from_index(i));
+            node_array.add(i, node);
             square_el.add(i, square);
             map.addView(square_el.get(i), params);
         }
@@ -431,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         else if(situation == STATE_FREE){
             square_el.get(index).setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+            node_array.get(index).setState(Node.OPEN);
         }
     }
 
@@ -478,6 +485,17 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         return marginLeft;
     }
 
+    int get_x_from_index(int index){
+        int index_x;
+        if(index != 0){
+            index_x = index%nb_el_width;
+        }else{
+            index_x = 0;
+        }
+
+        return index_x;
+    }
+
     int get_marginTop_from_index(int index){
         int marginTop;
         if(index != 0){
@@ -487,6 +505,77 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         return marginTop;
     }
+
+    int get_y_from_index(int index){
+        int index_y;
+        if(index != 0){
+            index_y = (int) (index / nb_el_width);
+        }else{
+            index_y = 0;
+        }
+        return index_y;
+    }
+
+
+
+
+    // A* Algorithm
+
+    Node search_next_node(int index_ini, int index_fin, int index_cur){
+        Node node_ini = node_array.get(index_ini);
+        Node node_fin = node_array.get(index_fin);
+        Node node_cur = node_array.get(index_cur);
+
+        // get 4 neighbors
+        int[] index_neighbor = new int[4];
+        float[] F = new float[4];
+        for(int i=0; i<4; i++){
+           index_neighbor[i] = get_neighbor(index_cur, i);
+           Node node = node_array.get(index_neighbor[i]);
+           if(node.State != Node.CLOSED){
+               boolean change_parent = node.getG_H_F(node_ini, node_fin);
+               if(change_parent){
+                   node.ParentNode = node_cur;
+               }
+
+           }
+           F[i] = node.F;
+        }
+
+        return node_fin;
+    }
+
+
+    // if neighbor doesn't exist = -1
+    int get_neighbor(int index, int direction){
+        int index_neighbor = 0;
+        switch(direction){
+            case UP : index_neighbor = index - nb_el_width;
+                if(index_neighbor < 0){
+                    index_neighbor = -1;
+                }
+                break;
+            case RIGHT : index_neighbor = index + 1;
+                if(get_y_from_index(index) != get_y_from_index(index_neighbor)){
+                    index_neighbor = -1;
+                }
+                break;
+            case DOWN : index_neighbor = index + nb_el_width;
+                if(index_neighbor >= number_square){
+                    index_neighbor = -1;
+                }
+                break;
+            case LEFT : index_neighbor = index - 1;
+                if(get_y_from_index(index) != get_y_from_index(index_neighbor)){
+                    index_neighbor = -1;
+                }
+                break;
+        }
+        return index_neighbor;
+    }
+
+
+
 
     // MANUAL
 
@@ -640,27 +729,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             button_auto.setText(getString(R.string.Start));
         }
     }
-
-    int get_x_from_index(int index){
-        int index_x;
-        if(index!=0){
-            index_x=index%nb_el_width;
-        } else{
-            index_x=0;
-        }
-        return index_x;
-    }
-
-    int get_y_from_index(int index){
-        int index_y;
-        if(index!=0){
-            index_y=index/nb_el_width;
-        } else{
-            index_y=0;
-        }
-        return index_y;
-    }
-
 
 
 
