@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     ImageView robot;
     int orientation_robot = LEFT;
-    int position_robot = 1576;
+    int position_initial = 12075;
+    int position_robot = position_initial;
 
     static final int STATE_UNKNOWN = 0;
     static final int STATE_OBSTACLE = 1;
@@ -272,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
         initialize_map();
         robot.bringToFront();
-        rotate(DOWN);
+        rotate(UP);
 
         change_state_square(position_robot, STATE_FREE);
 
@@ -521,14 +522,17 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     // A* Algorithm
 
-    Node search_next_node(int index_ini, int index_fin, int index_cur){
+    int search_next_node(int index_ini, int index_fin, int index_cur){
         Node node_ini = node_array.get(index_ini);
         Node node_fin = node_array.get(index_fin);
         Node node_cur = node_array.get(index_cur);
+        int index_new_cur;
 
         // get 4 neighbors
         int[] index_neighbor = new int[4];
-        float[] F = new float[4];
+        float smallest_F = number_square;
+        float new_F = 0;
+        int index_smalest_F = -1;
         for(int i=0; i<4; i++){
            index_neighbor[i] = get_neighbor(index_cur, i);
            Node node = node_array.get(index_neighbor[i]);
@@ -537,12 +541,28 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                if(change_parent){
                    node.ParentNode = node_cur;
                }
-
+               new_F = node.F;
+               if(new_F < smallest_F){
+                   smallest_F = new_F;
+                   index_smalest_F = i;
+                }
            }
-           F[i] = node.F;
+        }
+        if(index_smalest_F == -1){
+            index_new_cur = node_cur.get_index_parent();
+        }else{
+            index_new_cur = index_neighbor[index_smalest_F];
         }
 
-        return node_fin;
+
+        return index_new_cur;
+    }
+
+    void find_path(int index_ini, int index_fin){
+        int index_cur = index_ini;
+        while(index_cur != index_fin){
+            index_cur = search_next_node(index_ini, index_cur, index_fin);
+        }
     }
 
 
@@ -582,7 +602,16 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     //TODO: copy the readsensors and updatesensors once we have them in the fuckin robot
 
     public void UpMovement(View view) {
-        Button button_down = findViewById(R.id.button_up);
+        Button button_up = findViewById(R.id.button_up);
+        view.setBackgroundColor(Color.YELLOW);
+        button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        TextView textView = findViewById(R.id.button_start);
+        textView.setText("Halt");
+        mRunning = true;
+        byte data[] ={1}; // back command
+
+
+        /*Button button_down = findViewById(R.id.button_up);
         view.setBackgroundColor(Color.YELLOW);
         button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         TextView textView = findViewById(R.id.button_start);
@@ -607,6 +636,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         //UpdateSensorStatus();
         //ReadSensors();
+        */
 
 
 
@@ -615,18 +645,20 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     public void DownMovement(View view) {
-        Button button_up = findViewById(R.id.button_down);
+        Button button_down = findViewById(R.id.button_down);
         view.setBackgroundColor(Color.YELLOW);
-        button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         TextView textView = findViewById(R.id.button_start);
         textView.setText("Halt");
         mRunning = true;
         byte data[] ={2}; // back command
+        /*
         VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
         //       JackiModeCharacteristic.setWriteType(JackiModeCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
         //UpdateSensorStatus();
+        */
     }
 
     public void RightMovement(View view) {
@@ -639,12 +671,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         textView.setText("Halt");
         mRunning = true;
         byte data[] ={3}; // hard right
+        /*
         VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
         //  JackiModeCharacteristic.setWriteType(JackiModeCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
         //UpdateSensorStatus();
         // ReadSensors();
+        */
     }
 
     public void LeftMovement(View view) {
@@ -657,12 +691,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         textView.setText("Halt");
         mRunning = true;
         byte data[] ={4}; // left command
+        /*
         VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
         // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
         //UpdateSensorStatus();
         //     ReadSensors();
+        */
     }
 
 
