@@ -17,19 +17,20 @@
             android:layout_height="match_parent"
             android:layout_weight="0.35"
             android:orientation="vertical">
+
             <FrameLayout
                 android:id="@+id/map"
                 android:layout_width="750px"
                 android:layout_height="800px"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp">
 
                 <ImageView
                     android:id="@+id/robot"
-                    android:layout_marginTop="389px"
-                    android:layout_marginLeft="368px"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="368px"
+                    android:layout_marginTop="389px"
                     app:srcCompat="@drawable/arrow" />
             </FrameLayout>
 

@@ -31,6 +31,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements ManualFragment.OnFragmentInteractionListener, AutomaticFragment.OnFragmentInteractionListener{
@@ -227,27 +228,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                     mConnectionState = (TextView) findViewById(R.id.connection_state);
                     mDataField = (TextView) findViewById(R.id.data_value);
 
-                    // Bottom Fragment
-
-                    LinearLayout fragContainer = findViewById(R.id.FragmentLinearLayout);
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-                    mode = intent.getBooleanExtra(ManualFragment.MANUAL, true);
-
-                    if(mode) {
-                        ManualFragment myManualFragment;
-                        myManualFragment = new ManualFragment();
-                        ft.add(fragContainer.getId(), myManualFragment, null);
-                    }
-
-                    else {
-                        AutomaticFragment myAutomaticFragment;
-                        myAutomaticFragment = new AutomaticFragment();
-                        ft.add(fragContainer.getId(), myAutomaticFragment, null);
-                    }
-
-                    ft.commit();
-
 
                     bError = false; // ok to Launch RSLK controller
                 }
@@ -259,6 +239,29 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             Toast.makeText(MainActivity.this, "Must be connected to an RSLK to run this app",
                     Toast.LENGTH_SHORT).show();
         }
+
+        // Bottom Fragment
+        final Intent intent = getIntent();
+
+        LinearLayout fragContainer = findViewById(R.id.FragmentLinearLayout);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        mode = intent.getBooleanExtra(ManualFragment.MANUAL, true);
+
+        if(mode) {
+            ManualFragment myManualFragment;
+            myManualFragment = new ManualFragment();
+            ft.add(fragContainer.getId(), myManualFragment, null);
+        }
+
+        else {
+            AutomaticFragment myAutomaticFragment;
+            myAutomaticFragment = new AutomaticFragment();
+            ft.add(fragContainer.getId(), myAutomaticFragment, null);
+        }
+
+        ft.commit();
+
 
         map = findViewById(R.id.map);
         robot = findViewById(R.id.robot);
@@ -622,18 +625,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     // AUTOMATIC
     // TODO: complete automatic path with the maze code
 
-    //================================================================
-    // Find the position of the Starting (Source) point
-    /*private int findStartingPosition() {
-        int position = position_robot;
-        for (int j = 0; j < square_el.size(); j++) { //check if correct
-            if (square_el.get(j).isStartPoint() == 1) {
-                position = j;
-            }
-        }
-        return position;
-    } */
-
 
 
     public void AutomaticMovement(View view) {
@@ -650,33 +641,65 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
     }
 
-    public void pathsolver(View view, int start, int goal) {
+    int get_x_from_index(int index){
+        int index_x;
+        if(index!=0){
+            index_x=index%nb_el_width;
+        } else{
+            index_x=0;
+        }
+        return index_x;
+    }
+
+    int get_y_from_index(int index){
+        int index_y;
+        if(index!=0){
+            index_y=index/nb_el_width;
+        } else{
+            index_y=0;
+        }
+        return index_y;
+    }
+
+
+
+
+    //TODO: try to find how to go from square to square (once each time)
+
+
+
+    public void automatic_exploration(int start) {
         int position = start;
-
-        int positionx = get_marginLeft_from_index(position);
-        int positiony = get_marginTop_from_index(position);
-
-        int positionx_goal = get_marginLeft_from_index(goal);
-        int positiony_goal = get_marginTop_from_index(goal);
-
-        int NORTH = positiony+1;  //+ one cell from the map
-        int SOUTH = positiony-1;
-        int EAST = positionx+1;
-        int WEST = positiony-1;
-
 
         //Begin at a state free square
         change_state_square(position, STATE_FREE);
 
-        //Get the position of the obstacles
-        // TODO ask Jordan what the position of the obstacles are
-
-
         //Solver
-        while(positionx!=positionx_goal && positiony!=positiony_goal) {
+
+       while(mRunning){ //if mrunning goes to false, robot stops
+
+            //Random obstacles: when we arrive to a square, we got a probability that the front square is and obstacle
+            float obs = new Random().nextInt(1);
+
+            if(obs>=0.9){   //10 percent chance of an obstacle
+
+                //Stop the movement and turn:
+
+                change_state_square(position+750/5,STATE_OBSTACLE); //create an obstacle down
 
 
-            if(findPath(positionx,positiony, NORTHERN)[2]==true) {
+                //turn the robot
+                RightMovement(findViewById(R.id.button_right)); //turn right for example
+                rotate(RIGHT); //rotate arrow in the map
+            }
+
+            change_state_square(position, STATE_FREE); //color the square to green
+
+       }
+    }
+
+
+                /*if(findPath(positionx,positiony, NORTHERN)[2]==true) {
                 positiony = NORTH;   //go north with the robot movement function
             }
             else {
@@ -689,9 +712,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                 if(findPath(positionx,positiony, WESTERN)[2]==true){
                     positionx=WEST;
                 }
-            }
-        }
-    }
+            }*/
 
     public static boolean[] findPath(int positionx, int positiony, int CASE){
 
@@ -741,7 +762,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public void onFragmentInteraction(Uri uri) {
 
     }
-
 
 
 
