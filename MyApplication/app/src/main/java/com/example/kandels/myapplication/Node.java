@@ -27,15 +27,15 @@ public class Node {
         ParentNode = null;
     }
 
-    boolean getG_H_F( Node node_ini, Node node_fin){
+    boolean getG_H_F( Node node_cur, Node node_fin){
         boolean change_parent = true;
         if(State == NOT_TESTED){
-            G = Math.abs(Index[1] - node_ini.Index[1]) + Math.abs(Index[2] - node_ini.Index[2]);
+            G = Math.abs(Index[1] - node_cur.Index[1]) + Math.abs(Index[2] - node_cur.Index[2]) + node_cur.G;
             H = Math.abs(Index[1] - node_fin.Index[1]) + Math.abs(Index[2] - node_fin.Index[2]);
             getF();
 
         }else if(State == OPEN){
-            float G_new = Math.abs(Index[1] - node_ini.Index[1]) + Math.abs(Index[2] - node_ini.Index[2]);
+            float G_new = Math.abs(Index[1] - node_cur.Index[1]) + Math.abs(Index[2] - node_cur.Index[2]);
             if(G_new < G){
                 G = G_new;
             }else{
@@ -52,5 +52,11 @@ public class Node {
 
     void setState(int state){
         State = state;
+    }
+
+
+    int get_index_parent(){
+        int index = ParentNode.Index[0];
+        return index;
     }
 }
