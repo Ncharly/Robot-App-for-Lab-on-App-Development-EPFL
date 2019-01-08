@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 public class AutomaticFragment extends Fragment {
     public static final String AUTOMATIC = "AUTOMATIC";
     private View fragmentView;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
