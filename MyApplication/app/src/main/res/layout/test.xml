@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:text="@string/Start"
+        android:layout_centerInParent="true"
+        />
+
+    <Button
+        android:id="@+id/button_up"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_above="@+id/button_start"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="0dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/Up" />
+
+    <Button
+        android:id="@+id/button_down"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_below="@+id/button_start"
+        android:layout_alignLeft="@+id/button_start"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/Down" />
+
+    <Button
+        android:id="@+id/button_left"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="0dp"
+        android:layout_toLeftOf="@+id/button_start"
+        android:background="@color/colorPrimary"
+        android:text="@string/Left" />
+
+    <Button
+        android:id="@+id/button_right"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="0dp"
+        android:layout_toRightOf="@+id/button_start"
+        android:background="@color/colorPrimary"
+        android:text="@string/Right" />
+
+    <Switch
+        android:id="@+id/for_back"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginBottom="63dp"
+        android:onClick="backwards_slide"
+        android:text="@string/Backwards" />
+
+
+</RelativeLayout>

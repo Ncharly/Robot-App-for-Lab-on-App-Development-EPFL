@@ -13,6 +13,7 @@
     <string name="SelectMode">Select Mode</string>
     <string name="Manual">MANUAL</string>
     <string name="Automatic">AUTOMATIC</string>
+    <string name="Backwards">Backwards</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

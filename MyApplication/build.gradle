@@ -36,6 +36,7 @@ allprojects {
                 some_other_key : "some_other_value",
         ]
     }
+
 }
 
 task clean(type: Delete) {

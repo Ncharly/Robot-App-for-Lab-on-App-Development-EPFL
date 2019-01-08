@@ -1,25 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/dark_grey"
-    android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity"
-    tools:deviceIds="wear">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/inner_frame_layout_padding"
-        app:boxedEdges="all">
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Start"
+        android:background="@drawable/round_shape"
+        android:textColor="#f8fdf9"
+        android:textSize="10sp"/>
 
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_world" />
+    <ImageButton
+        android:id="@+id/imageButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/ic_expand_less_white_22" />
 
-    </FrameLayout>
-</android.support.wear.widget.BoxInsetLayout>
+    <ImageButton
+        android:id="@+id/imageButton5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/imageButton4"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="13dp"
+        android:rotation="180"
+        android:src="@drawable/ic_expand_less_white_22" />
+
+    <ImageButton
+        android:id="@+id/imageButton6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="7dp"
+        android:rotation="270"
+        android:src="@drawable/ic_expand_less_white_22" />
+
+    <ImageButton
+        android:id="@+id/imageButton7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="7dp"
+        android:rotation="90"
+        android:src="@drawable/ic_expand_less_white_22" />
+
+
+</RelativeLayout>

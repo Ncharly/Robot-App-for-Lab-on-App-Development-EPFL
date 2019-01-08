@@ -18,6 +18,7 @@ import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -31,8 +32,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static android.app.Service.START_NOT_STICKY;
 
 public class WearService extends WearableListenerService {
 
@@ -173,8 +172,17 @@ public class WearService extends WearableListenerService {
                         intent.putExtra("REPLACE_THIS_WITH_A_STRING_OF_ARRAYLIST_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY", arraylist);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         break;
+                    /*case BuildConfig.W_profile_path:
+                        Log.v(TAG,"Data changed for path: " + uri);
+                        DataMap dataMap = dataMapItem.getDataMap().getDataMap(BuildConfig.W_profile_key);
+                        String username = dataMap.getString("username");
+                        intent = new Intent(MainActivity.ACTION_RECEIVE_PROFILE_INFO);
+                        intent.putExtra(MainActivity.PROFILE_USERNAME,username);
+                        bitmapFromAsset(dataMap.getAsset("photo"),intent,MainActivity.PROFILE_IMAGE);
+                        break;*/
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
+                        //Log.v(TAG,BuildConfig.W_profile_path);
                         break;
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {

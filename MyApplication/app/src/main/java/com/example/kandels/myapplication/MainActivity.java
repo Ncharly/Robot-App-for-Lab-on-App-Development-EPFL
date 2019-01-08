@@ -671,7 +671,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     // MANUAL
 
-    //TODO: copy the readsensors and updatesensors once we have them in the fuckin robot
+    //TODO: put these functions in the fragments automatic and manual
 
     public void UpMovement(View view) {
         Button button_up = findViewById(R.id.button_up);
@@ -861,7 +861,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     // AUTOMATIC
 
     public void AutomaticMovement(View view) {
-        Button button_auto = findViewById(R.id.button_auto);
+        Button button_auto = findViewById(R.id.button_automatic);
 
 
         if(button_auto.getText()==getString(R.string.Start)){

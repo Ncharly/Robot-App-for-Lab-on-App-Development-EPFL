@@ -1,15 +1,28 @@
 package com.example.kandels.myapplication;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends WearableActivity {
+
+
+    public static final String ACTION_RECEIVE_PROFILE_INFO = "RECEIVE_PROFILE_INFO";
+    public static final String PROFILE_IMAGE = "PROFILE_IMAGE";
+    public static final String PROFILE_USERNAME = "PROFILE_USERNAME";
 
     private TextView mTextView;
 
@@ -22,6 +35,24 @@ public class MainActivity extends WearableActivity {
 
         // Enables Always-on
         setAmbientEnabled();
+
+
+        /*LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //ImageView imageView = findViewById(R.id.wearImageView);
+                //TextView textView = findViewById(R.id.wearTextView);
+                //get the image and the text from the main
+
+                byte[] byteArray = intent.getByteArrayExtra(PROFILE_IMAGE);
+                Bitmap bmpProfile = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                //imageView.setImageBitmap(bmpProfile);
+
+                String username = intent.getStringExtra(PROFILE_USERNAME);
+                //textView.setText("Welcome "+username + "!");
+
+            }
+        }, new IntentFilter(ACTION_RECEIVE_PROFILE_INFO));*/
 
 
     }
