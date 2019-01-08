@@ -313,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             unbindService(mServiceConnection);
             mBluetoothLeService = null;
         }
+        node_array = null;
     }
 
     private void displayGattServices(List<BluetoothGattService> gattServices) {
@@ -452,13 +453,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     private void rotate(int direction) {
         int degree = (direction - LEFT) * 90;
-        final RotateAnimation rotateAnim = new RotateAnimation(0.0f, degree,
+        /*final RotateAnimation rotateAnim = new RotateAnimation(90 * (orientation_robot - LEFT), degree,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+                RotateAnimation.RELATIVE_TO_SELF, 0.5f);*/
+        robot.setRotation(degree);
 
-        rotateAnim.setDuration(0);
+        /*rotateAnim.setDuration(0);
         rotateAnim.setFillAfter(true);
-        robot.startAnimation(rotateAnim);
+        robot.startAnimation(rotateAnim);*/
         orientation_robot = direction;
 
         set_arrow();
@@ -569,8 +571,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             index_new_cur = index_neighbor[index_smalest_F];
         }
 
-        Log.i("index new cur", Integer.toString(index_new_cur));
-        Log.i("position", Integer.toString(position_robot));
 
 
         return index_new_cur;
@@ -582,12 +582,19 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             index_cur = search_next_node(index_ini, index_fin, index_cur);
         }
         Node node;
+        path_back.add(index_fin);
+        Log.i("position", Integer.toString(index_fin));
         while(index_cur != index_ini){
             node = node_array.get(index_cur).ParentNode;
             index_cur = node.Index[0];
             path_back.add(index_cur);
+            Log.i("position", Integer.toString(index_cur));
+        }
+        for(int i = 0; i < node_array.size(); i++ ){
+            node_array.get(i).reinitialize();
         }
         Collections.reverse(path_back);
+        path_back.remove(0);
     }
 
 
@@ -627,6 +634,20 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             find_path(position_robot, position_initial);
         }
 
+    }
+
+    int get_orientation(int index_cur, int index_next){
+        int difference = index_next - index_cur;
+        if(difference == 1){
+            return RIGHT;
+        }else if(difference == -1){
+            return LEFT;
+        }else if(difference > 0){
+            return DOWN;
+        }else if(difference < 0){
+            return UP;
+        }
+        return orientation_robot;
     }
 
 
@@ -733,10 +754,15 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void move_one_square(){
         if(go_back){
-            int index_next = path_back.get(0);
-            path_back.remove(0);
-            position_robot = index_next;
-            set_arrow();
+            if(position_robot != position_initial){
+                int index_next = path_back.get(0);
+                rotate(get_orientation(position_robot, index_next));
+                path_back.remove(0);
+                position_robot = index_next;
+                set_arrow();
+            }else{
+                go_back = false;
+            }
 
         }else{
             int index_neighbor = get_neighbor(position_robot, orientation_robot);
@@ -751,7 +777,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
             float obs = new Random().nextInt(10);
             Log.i("random", Float.toString(obs));
-            if(obs>=9){   //10 percent chance of an obstacle
+            if(obs>=11){   //10 percent chance of an obstacle
                 index_neighbor = get_neighbor(index_neighbor, orientation_robot);
                 if(index_neighbor != -1){
                     if(node_array.get(index_neighbor).State_robot == STATE_UNKNOWN){
@@ -772,6 +798,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             button_start.setText(getString(R.string.Stop));
         }
         else{
+
+            move_one_square();
+
             Button button_right = findViewById(R.id.button_right);
             button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
 

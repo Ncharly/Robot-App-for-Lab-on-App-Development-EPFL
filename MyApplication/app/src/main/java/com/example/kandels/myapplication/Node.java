@@ -68,4 +68,12 @@ public class Node {
         int index = ParentNode.Index[0];
         return index;
     }
+
+    void reinitialize(){
+        if(State == OPEN){
+            State = NOT_TESTED;
+        }else if(State_robot == MainActivity.STATE_FREE){
+            State = NOT_TESTED;
+        }
+    }
 }
