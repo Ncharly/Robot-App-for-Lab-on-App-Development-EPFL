@@ -21,6 +21,8 @@ public class Node {
     static final int CLOSED = 1;
     static final int NOT_TESTED = 2;
 
+    static final int WEIGHT = 20;
+
     public Node(int index, int index_x, int index_y, View view) {
         Index[0] = index;
         Index[1] = index_x;
@@ -35,24 +37,26 @@ public class Node {
         square = view;
     }
 
-    boolean getG_H_F( Node node_cur, Node node_fin){
+    boolean getG_H_F( Node node_ini, Node node_fin){
         boolean change_parent = true;
         if(State == NOT_TESTED){
-            G = Math.abs(Index[1] - node_cur.Index[1]) + Math.abs(Index[2] - node_cur.Index[2]) + node_cur.G;
+            G = Math.abs(Index[1] - node_ini.Index[1]) + Math.abs(Index[2] - node_ini.Index[2]); // + node_ini.G;
             H = Math.abs(Index[1] - node_fin.Index[1]) + Math.abs(Index[2] - node_fin.Index[2]);
             getF();
-            State = OPEN;
 
         }else if(State == OPEN){
-            float G_new = Math.abs(Index[1] - node_cur.Index[1]) + Math.abs(Index[2] - node_cur.Index[2]);
+            float G_new = Math.abs(Index[1] - node_ini.Index[1]) + Math.abs(Index[2] - node_ini.Index[2]);
             if(G_new < G){
                 G = G_new;
             }else{
                 change_parent = false;
             }
+            getF();
         }
         return change_parent;
     }
+
+
 
 
     void getF(){
