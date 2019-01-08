@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public boolean mRunning;
     private final static String TAG = MainActivity.class.getSimpleName();
     Button button_start;
+    Button button_go_back;
 
     //BLE
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
@@ -280,7 +281,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
         map = findViewById(R.id.map);
         robot = findViewById(R.id.robot);
-        button_start = findViewById(R.id.button_start);
 
         initialize_map();
         robot.bringToFront();
@@ -461,14 +461,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     private void rotate(int direction) {
         int degree = (direction - LEFT) * 90;
-        /*final RotateAnimation rotateAnim = new RotateAnimation(90 * (orientation_robot - LEFT), degree,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f);*/
         robot.setRotation(degree);
-
-        /*rotateAnim.setDuration(0);
-        rotateAnim.setFillAfter(true);
-        robot.startAnimation(rotateAnim);*/
         orientation_robot = direction;
 
         set_arrow();
@@ -606,6 +599,44 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
 
+
+
+    // Robot function
+
+    public void move_robot(int pos, int direction){
+        rotate(direction);
+        position_robot = pos;
+        set_arrow();
+        change_state_square(pos, STATE_FREE);
+    }
+
+    void generate_obstacle(int pos, int direction){
+        int index_neighbor = get_neighbor(pos, direction);
+        if(index_neighbor != -1){
+            Node node = node_array.get(index_neighbor);
+            if(node.State_robot == STATE_UNKNOWN){
+                float obs = new Random().nextInt(10);
+                if(obs>=9){   //10 percent chance of an obstacle
+                    change_state_square(index_neighbor,STATE_OBSTACLE); //create an obstacle
+                }
+            }
+        }
+    }
+
+    int get_orientation(int index_cur, int index_next){
+        int difference = index_next - index_cur;
+        if(difference == 1){
+            return RIGHT;
+        }else if(difference == -1){
+            return LEFT;
+        }else if(difference > 0){
+            return DOWN;
+        }else if(difference < 0){
+            return UP;
+        }
+        return orientation_robot;
+    }
+
     // if neighbor doesn't exist = -1
     int get_neighbor(int index, int direction){
         int index_neighbor = 0;
@@ -635,46 +666,10 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
 
-    public void GoBack(View view) {
-        Button button_go_back = findViewById(R.id.button_go_back);
-        button_start.performClick();
-        if(go_back){
-            button_go_back.setText(getString(R.string.Go_Back));
-            go_back = false;
-            path_back.clear();
-            for(int i = 0; i < node_array.size(); i++ ){
-                node_array.get(i).reinitialize();
-            }
-        }else{
-            button_go_back.setText(getString(R.string.Cancel));
-            go_back_ready = false;
-            go_back = true;
-            find_path(position_robot, position_initial);
-            go_back_ready = true;
-        }
-
-    }
-
-    int get_orientation(int index_cur, int index_next){
-        int difference = index_next - index_cur;
-        if(difference == 1){
-            return RIGHT;
-        }else if(difference == -1){
-            return LEFT;
-        }else if(difference > 0){
-            return DOWN;
-        }else if(difference < 0){
-            return UP;
-        }
-        return orientation_robot;
-    }
-
-
 
 
     // MANUAL
 
-    //TODO: copy the readsensors and updatesensors once we have them in the fuckin robot
 
     public void UpMovement(View view) {
         Button button_up = findViewById(R.id.button_up);
@@ -683,38 +678,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         byte data[] ={1}; // back command
         rotate(UP);
 
-
-        /*Button button_down = findViewById(R.id.button_up);
-        view.setBackgroundColor(Color.YELLOW);
-        button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
-        TextView textView = findViewById(R.id.button_start);
-
-        if (!mRunning) {
-            textView.setText("Halt");
-
-            //     statusView.setText("Running");
-            mRunning = true;
-            byte data[] ={1}; // go command
-            JackiModeCharacteristic.setValue(data);
-            // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-            mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
-        }else {
-            textView.setText("Go");
-            //    statusView.setText("Halted");
-            mRunning = false;
-            byte data[] ={0}; // stop command
-            JackiModeCharacteristic.setValue(data);
-            // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-            mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
-        }
-        //UpdateSensorStatus();
-        //ReadSensors();
-        */
-
-
-
-        //add movement to firebase, NOT SURE WHERE TO PUT IT
-        //addMovementToFirebaseDB();
     }
 
     public void DownMovement(View view) {
@@ -771,16 +734,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         */
     }
 
-    public void move_one_square(){
+    public void manual_mode(){
         if(go_back && go_back_ready){
             if(position_robot != position_initial){
                 int index_next = path_back.get(0);
-                rotate(get_orientation(position_robot, index_next));
+                move_robot(index_next, get_orientation(position_robot, index_next));
                 path_back.remove(0);
-                position_robot = index_next;
-                set_arrow();
             }else{
-                //go_back = false;
+                button_go_back.performClick();
                 button_start.performClick();
             }
 
@@ -789,26 +750,31 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             if(index_neighbor != -1){
                 Node node = node_array.get(index_neighbor);
                 if(node.State_robot != STATE_OBSTACLE){
-                    position_robot = index_neighbor;
-                    change_state_square(index_neighbor, STATE_FREE);
-
-                    set_arrow();
-
-                    float obs = new Random().nextInt(10);
-                    if(obs>=9){   //10 percent chance of an obstacle
-                        index_neighbor = get_neighbor(index_neighbor, orientation_robot);
-                        if(index_neighbor != -1){
-                            if(node_array.get(index_neighbor).State_robot == STATE_UNKNOWN){
-                                change_state_square(index_neighbor,STATE_OBSTACLE); //create an obstacle
-                            }
-
-                        }
-                    }
+                    move_robot(index_neighbor, orientation_robot);
+                    generate_obstacle(position_robot, orientation_robot);
                 }
-
             }
+        }
+    }
 
 
+    public void GoBack(View view) {
+        if(button_start != null){
+            button_go_back = findViewById(R.id.button_go_back);
+            if(go_back){
+                button_go_back.setText(getString(R.string.Go_Back));
+                go_back = false;
+                path_back.clear();
+                for(int i = 0; i < node_array.size(); i++ ){
+                    node_array.get(i).reinitialize();
+                }
+            }else{
+                button_go_back.setText(getString(R.string.Cancel));
+                go_back_ready = false;
+                go_back = true;
+                find_path(position_robot, position_initial);
+                go_back_ready = true;
+            }
         }
     }
 
@@ -841,56 +807,26 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
-   /* private void addProfileToFirebaseDB() {
-        profileRef.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData
-                                                            mutableData) {
-                mutableData.child("username").setValue(userProfile.username);
-                mutableData.child("password").setValue(userProfile.password);
-                mutableData.child("height").setValue(userProfile.height_cm);
-                mutableData.child("weight").setValue(userProfile.weight_kg);
-                return Transaction.success(mutableData);
-            }
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError,
-                                   boolean b, @Nullable DataSnapshot
-                                           dataSnapshot) {
-            }
-        });
-    } */
 
 
-   void generate_obstacle(int pos, int direction){
-        int index_neighbor = get_neighbor(pos, direction);
-        if(index_neighbor != -1){
-            Node node = node_array.get(index_neighbor);
-            if(node.State_robot == STATE_UNKNOWN){
-                float obs = new Random().nextInt(10);
-                if(obs>=9){   //10 percent chance of an obstacle
-                        change_state_square(index_neighbor,STATE_OBSTACLE); //create an obstacle
-                }
-            }
-        }
-    }
+
 
     // AUTOMATIC
 
     public void AutomaticMovement(View view) {
-        Button button_auto = findViewById(R.id.button_auto);
+        button_start = findViewById(R.id.button_auto);
 
 
-        if(button_auto.getText()==getString(R.string.Start)){
+        if(button_start.getText()==getString(R.string.Start)){
             view.setBackgroundColor(Color.RED);
-            button_auto.setText(getString(R.string.Stop));
+            button_start.setText(getString(R.string.Stop));
             mRunning = true;
             //automatic_exploration(position_robot); //start the automatic exploration mode with the position of the
                                                     // robot: maybe change the position
         }
         else {
             view.setBackgroundColor(getResources().getColor(R.color.Orange));
-            button_auto.setText(getString(R.string.Start));
+            button_start.setText(getString(R.string.Start));
             mRunning = false;
         }
     }
@@ -899,13 +835,11 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         if(go_back && go_back_ready){
             if(position_robot != position_initial){
                 int index_next = path_back.get(0);
-                rotate(get_orientation(position_robot, index_next));
+                move_robot(index_next, get_orientation(position_robot, index_next));
                 path_back.remove(0);
-                position_robot = index_next;
-                set_arrow();
             }else{
-                go_back = false;
-                //button_start.performClick();
+                button_start.performClick();
+                button_go_back.performClick();
             }
 
         }else if(go_back == false){
@@ -915,7 +849,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
 
 
-    //TODO: try to find how to go from square to square (once each time)
 
 
 
@@ -930,9 +863,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                 if(node_array.get(index).State_robot == STATE_UNKNOWN){
                     return index;
                 }else if(node_array.get(index).State_robot == STATE_FREE){
-                    if(true){
-                        pos_free = index;
-                    }
+                    pos_free = index;
                     orientation_wanted = (orientation_wanted + 1)%4;
                 }else if(node_array.get(index).State_robot == STATE_OBSTACLE){
                     orientation_wanted = (orientation_wanted + 1)%4;
@@ -954,31 +885,25 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
-    public void move_robot(int pos, int direction){
-        //Log.i("pos", Integer.toString(pos));
-        rotate(direction);
-        position_robot = pos;
-        set_arrow();
-        change_state_square(pos, STATE_FREE);
-    }
 
     public void automatic_go_back(View view) {
-        Button button_go_back = findViewById(R.id.button_go_back_automatic);
-        //button_start.performClick();
-        if(go_back){
-            button_go_back.setText(getString(R.string.Go_Back));
-            go_back = false;
-            path_back.clear();
-            for(int i = 0; i < node_array.size(); i++ ){
-                node_array.get(i).reinitialize();
-            }
-        }else{
-            button_go_back.setText(getString(R.string.Cancel));
-            go_back_ready = false;
-            go_back = true;
-            find_path(position_robot, position_initial);
-            go_back_ready = true;
-        }
+       if(button_start != null) {
+           button_go_back = findViewById(R.id.button_go_back_automatic);
+           if(go_back){
+               button_go_back.setText(getString(R.string.Go_Back));
+               go_back = false;
+               path_back.clear();
+               for(int i = 0; i < node_array.size(); i++ ){
+                   node_array.get(i).reinitialize();
+               }
+           }else{
+               button_go_back.setText(getString(R.string.Cancel));
+               go_back_ready = false;
+               go_back = true;
+               find_path(position_robot, position_initial);
+               go_back_ready = true;
+           }
+       }
     }
 
 
@@ -986,68 +911,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
 
 
-
-
-
-
-
-                /*if(findPath(positionx,positiony, NORTHERN)[2]==true) {
-                positiony = NORTH;   //go north with the robot movement function
-            }
-            else {
-                if (findPath(positionx, positiony, SOUTHERN)[2] == true) {
-                    positiony = SOUTH;  //rotate the robot and go south ---> TO DO
-                }
-                if(findPath(positionx,positiony, EASTERN)[2]==true){
-                    positionx=EAST;
-                }
-                if(findPath(positionx,positiony, WESTERN)[2]==true){
-                    positionx=WEST;
-                }
-            }*/
-
-    /*public static boolean[] findPath(int positionx, int positiony, int CASE){
-
-        int pos_NORTH = positiony+1;  //+ one cell from the map
-        int pos_SOUTH = positiony-1;
-        int pos_EAST = positionx+1;
-        int pos_WEST = positiony-1;
-        boolean result = false;             //return 1 if it went nort, south etc...
-
-        //int[] position_update = new int[]{positionx, positiony, result};
-        boolean[] position_update = new boolean[]{false, false, result};
-
-        switch (CASE){
-            case NORTHERN:
-                if (pos_NORTH != 0){        //If the position in the north is different than an obstacle
-                      position_update[1]=true;                  //NEED TO CHECK THE OBSTACLE POSITIONS!!!!!
-                      result=true;
-                      break;
-                }
-            case SOUTHERN:{
-                if(pos_SOUTH != 0){
-                    position_update[1]=true;
-                    result=true;
-                    break;
-                }
-            }
-            case WESTERN:{
-                if(pos_WEST != 0){
-                    position_update[0]=true;
-                    result=true;
-                    break;
-                }
-            }
-            case EASTERN:{
-                if(pos_SOUTH != 0){
-                    position_update[0]=true;
-                    result=true;
-                    break;
-                }
-            }
-        }
-        return new boolean[] {position_update[0], position_update[1], result};
-    } */
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -1064,7 +927,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
             if(mode){
                 if(mRunning){
-                    move_one_square();
+                    manual_mode();
                 }
             }else{
                 if(mRunning){
@@ -1078,5 +941,26 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             handler.postDelayed(runnableCode, 100);
         }
     };
+
+
+     /* private void addProfileToFirebaseDB() {
+        profileRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData
+                                                            mutableData) {
+                mutableData.child("username").setValue(userProfile.username);
+                mutableData.child("password").setValue(userProfile.password);
+                mutableData.child("height").setValue(userProfile.height_cm);
+                mutableData.child("weight").setValue(userProfile.weight_kg);
+                return Transaction.success(mutableData);
+            }
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError,
+                                   boolean b, @Nullable DataSnapshot
+                                           dataSnapshot) {
+            }
+        });
+    } */
 
 }
