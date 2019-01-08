@@ -8,6 +8,7 @@
     <string name="Stop">STOP</string>
     <string name="Connect">CONNECT</string>
     <string name="Go_Back">GO BACK</string>
+    <string name="Cancel">Cancel</string>
     <string name="WelcomeMessage">Welcome to the Robot App!</string>
     <string name="SelectMode">Select Mode</string>
     <string name="Manual">MANUAL</string>

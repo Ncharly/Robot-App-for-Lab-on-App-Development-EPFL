@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.net.Uri;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private boolean go_back = false;
     public boolean mRunning;
     private final static String TAG = MainActivity.class.getSimpleName();
+    Button button_start;
 
     //BLE
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     List<Node> node_array = new ArrayList<Node>();
 
     ArrayList<Integer> path_back = new ArrayList<Integer>();
+
+    boolean go_back_ready = false;
 
 
     ImageView robot;
@@ -274,12 +278,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
         map = findViewById(R.id.map);
         robot = findViewById(R.id.robot);
+        button_start = findViewById(R.id.button_start);
 
         initialize_map();
         robot.bringToFront();
         rotate(UP);
 
         change_state_square(position_robot, STATE_FREE);
+        handler.post(runnableCode);
 
 
 
@@ -552,17 +558,19 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         int index_smalest_F = -1;
         for(int i=0; i<4; i++){
            index_neighbor[i] = get_neighbor(index_cur, i);
-           Node node = node_array.get(index_neighbor[i]);
-           if(node.State != Node.CLOSED){
-               boolean change_parent = node.getG_H_F(node_ini, node_fin);
-               if(change_parent){
-                   node.ParentNode = node_cur;
+           if(index_neighbor[i] != -1){
+               Node node = node_array.get(index_neighbor[i]);
+               if(node.State != Node.CLOSED){
+                   boolean change_parent = node.getG_H_F(node_ini, node_fin);
+                   if(change_parent){
+                       node.ParentNode = node_cur;
+                   }
+                   new_F = node.F;
+                   if(new_F < smallest_F){
+                       smallest_F = new_F;
+                       index_smalest_F = i;
+                   }
                }
-               new_F = node.F;
-               if(new_F < smallest_F){
-                   smallest_F = new_F;
-                   index_smalest_F = i;
-                }
            }
         }
         if(index_smalest_F == -1){
@@ -583,12 +591,10 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         Node node;
         path_back.add(index_fin);
-        Log.i("position", Integer.toString(index_fin));
         while(index_cur != index_ini){
             node = node_array.get(index_cur).ParentNode;
             index_cur = node.Index[0];
             path_back.add(index_cur);
-            Log.i("position", Integer.toString(index_cur));
         }
         for(int i = 0; i < node_array.size(); i++ ){
             node_array.get(i).reinitialize();
@@ -627,11 +633,21 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     public void GoBack(View view) {
+        Button button_go_back = findViewById(R.id.button_go_back);
+        button_start.performClick();
         if(go_back){
+            button_go_back.setText(getString(R.string.Go_Back));
             go_back = false;
+            path_back.clear();
+            for(int i = 0; i < node_array.size(); i++ ){
+                node_array.get(i).reinitialize();
+            }
         }else{
+            button_go_back.setText(getString(R.string.Cancel));
+            go_back_ready = false;
             go_back = true;
             find_path(position_robot, position_initial);
+            go_back_ready = true;
         }
 
     }
@@ -753,7 +769,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     public void move_one_square(){
-        if(go_back){
+        if(go_back && go_back_ready){
             if(position_robot != position_initial){
                 int index_next = path_back.get(0);
                 rotate(get_orientation(position_robot, index_next));
@@ -762,44 +778,47 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                 set_arrow();
             }else{
                 go_back = false;
+                button_start.performClick();
             }
 
-        }else{
+        }else if(go_back == false){
             int index_neighbor = get_neighbor(position_robot, orientation_robot);
             if(index_neighbor != -1){
                 Node node = node_array.get(index_neighbor);
                 if(node.State_robot != STATE_OBSTACLE){
                     position_robot = index_neighbor;
                     change_state_square(index_neighbor, STATE_FREE);
-                }
-                set_arrow();
-            }
 
-            float obs = new Random().nextInt(10);
-            Log.i("random", Float.toString(obs));
-            if(obs>=11){   //10 percent chance of an obstacle
-                index_neighbor = get_neighbor(index_neighbor, orientation_robot);
-                if(index_neighbor != -1){
-                    if(node_array.get(index_neighbor).State_robot == STATE_UNKNOWN){
-                        change_state_square(index_neighbor,STATE_OBSTACLE); //create an obstacle
+                    set_arrow();
+
+                    float obs = new Random().nextInt(10);
+                    if(obs>=9){   //10 percent chance of an obstacle
+                        index_neighbor = get_neighbor(index_neighbor, orientation_robot);
+                        if(index_neighbor != -1){
+                            if(node_array.get(index_neighbor).State_robot == STATE_UNKNOWN){
+                                change_state_square(index_neighbor,STATE_OBSTACLE); //create an obstacle
+                            }
+
+                        }
                     }
-
                 }
+
             }
+
+
         }
     }
 
 
     public void StartMovement(View view) {
-        Button button_start = findViewById(R.id.button_start);
+        button_start = findViewById(R.id.button_start);
         if(button_start.getText()==getString(R.string.Start)){
-            move_one_square();
+            mRunning = true;
             view.setBackgroundColor(Color.RED);
             button_start.setText(getString(R.string.Stop));
         }
         else{
-
-            move_one_square();
+            mRunning = false;
 
             Button button_right = findViewById(R.id.button_right);
             button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
@@ -956,6 +975,23 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    /// Timer
+
+    Handler handler = new Handler();
+    // Define the code block to be executed
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+
+            if(mRunning){
+                move_one_square();
+            }
+
+
+            handler.postDelayed(runnableCode, 1000);
+        }
+    };
 
 
 
