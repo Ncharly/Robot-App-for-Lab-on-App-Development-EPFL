@@ -1,4 +1,4 @@
-package com.example.kandels.myapplication;
+/*package com.example.kandels.myapplication;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,6 +35,7 @@ import java.util.List;
 import static android.app.Service.START_NOT_STICKY;
 
 public class WearService extends WearableListenerService {
+
 
     // Tag for Logcat
     private static final String TAG = "WearService";
@@ -329,3 +330,4 @@ public class WearService extends WearableListenerService {
         STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET
     }
 }
+*/
