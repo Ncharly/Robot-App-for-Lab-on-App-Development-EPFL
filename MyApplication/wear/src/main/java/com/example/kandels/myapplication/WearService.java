@@ -172,6 +172,7 @@ public class WearService extends WearableListenerService {
                         intent.putExtra("REPLACE_THIS_WITH_A_STRING_OF_ARRAYLIST_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY", arraylist);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         break;
+                        //TODO: pass movement functions to watch
                     /*case BuildConfig.W_profile_path:
                         Log.v(TAG,"Data changed for path: " + uri);
                         DataMap dataMap = dataMapItem.getDataMap().getDataMap(BuildConfig.W_profile_key);

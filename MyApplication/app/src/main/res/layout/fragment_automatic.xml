@@ -1,57 +1,52 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ManualFragment">
 
-    <Button
-        android:id="@+id/button_automatic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Start!"
-        android:background="@drawable/round_shape"
-        android:textSize="30sp"
-        android:textColor="#f8fdf9" />
+    <!-- TODO: Update blank fragment layout -->
 
-
-
-</RelativeLayout>
-
-
-
-    <!--
-    <?xml version="1.0" encoding="utf-8"?>
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ManualFragment">
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:background="@android:color/holo_blue_dark"
+            android:padding="1sp">
 
-            <FrameLayout
+            <Button
+                android:id="@+id/button_auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
-                android:padding="1sp">
+                android:background="@color/Orange"
+                android:onClick="AutomaticMovement"
+                android:text="@string/Start"
+                android:textSize="24sp" />
+        </FrameLayout>
 
-                <Button
-                    android:id="@+id/button_auto"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/Orange"
-                    android:onClick="AutomaticMovement"
-                    android:text="@string/Start"
-                    android:textSize="24sp" />
-            </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/holo_blue_dark"
+            android:padding="1sp">
 
-        </LinearLayout>
-    </FrameLayout> -->
+            <Button
+                android:id="@+id/button_go_back_automatic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/Orange"
+                android:onClick="automatic_go_back"
+                android:text="@string/Go_Back"
+                android:textSize="24sp" />
+        </FrameLayout>
+
+    </LinearLayout>
+</FrameLayout>

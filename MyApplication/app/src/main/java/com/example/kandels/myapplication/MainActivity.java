@@ -1,5 +1,6 @@
 package com.example.kandels.myapplication;
 
+import android.animation.ObjectAnimator;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -758,8 +759,27 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
     }
 
+    public boolean go_back_hidden = false;
 
     public void GoBack(View view) {
+
+        //Adding a slide for backwards movement, not sure if correct
+        //Call on onclick, slides, you switch value and slides again
+        //To be completed and check if necessary
+        View view_button = findViewById(R.id.button_go_back);
+        ObjectAnimator animator;
+        if(go_back_hidden){
+            animator = ObjectAnimator.ofFloat(view_button, "translationX", 60);
+        } else {
+            animator = ObjectAnimator.ofFloat(view_button, "translationX", 0);
+        }
+        go_back_hidden = !go_back_hidden;
+        animator.setDuration(700);
+        animator.start();
+
+
+
+
         if(button_start != null){
             button_go_back = findViewById(R.id.button_go_back);
             if(go_back){
@@ -813,6 +833,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
 
     // AUTOMATIC
+    //TODO regarder ce que j'ai mal fait avec ces boutons
+
 
     public void AutomaticMovement(View view) {
         Button button_auto = findViewById(R.id.button_automatic);
@@ -887,6 +909,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
+
+    //CHECK TOMORROW
 
     public void automatic_go_back(View view) {
        if(button_start != null) {
