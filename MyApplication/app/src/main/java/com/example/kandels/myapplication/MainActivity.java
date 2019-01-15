@@ -1,5 +1,6 @@
 package com.example.kandels.myapplication;
 
+
 import android.animation.ObjectAnimator;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -42,6 +43,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private final static String TAG = MainActivity.class.getSimpleName();
     Button button_start;
     Button button_go_back;
+    private Toast loading_map;
 
 
 
@@ -131,6 +134,10 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     int orientation_robot = LEFT;
     int position_initial = 12075;
     int position_robot = position_initial;
+
+    int total_mass = 0;
+    int x_mass = 0;
+    int y_mass = 0;
 
     static final int STATE_UNKNOWN = 0;
     static final int STATE_OBSTACLE = 1;
@@ -316,8 +323,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
         // No well connected to the robot
         if(bError){
-            Toast.makeText(MainActivity.this, "Must be connected to an RSLK to run this app",
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this, "Must be connected to an RSLK to run this app",
+                    //Toast.LENGTH_SHORT).show();
         }
 
         // Bottom Fragment
@@ -353,8 +360,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         change_state_square(position_robot, STATE_FREE);
         handler.post(runnableCode);
 
+
         //TODO: complete wear functions
-        sending_map_wear();
+        //sending_map_wear();
 
 
         //TODO check if it's in the oncreate or not
@@ -514,6 +522,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     // MAP
 
     void initialize_map(){
+        loading_map = Toast.makeText(this, "Loading MAP", Toast.LENGTH_LONG);
+        loading_map.show();
         View square;
         FrameLayout.LayoutParams params;
         int left_margin = - size_one_element;
@@ -533,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             params.topMargin = top_margin;
             params.leftMargin = left_margin;
             Log.i("index square", Integer.toString(i));
+            update_mass(i, 1);
             Node node = new Node(i, get_x_from_index(i), get_y_from_index(i), square);
             node_array.add(i, node);
             map.addView(square, params);
@@ -556,6 +567,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             node.State_robot = STATE_OBSTACLE;
             //putting 2 when pass on obstacle square
             map_matrix[get_x_from_index(index)][get_y_from_index(index)] = 2;
+            update_mass(index, -1);
         }
         else if(situation == STATE_FREE){
             node.square.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
@@ -563,6 +575,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             node.State_robot = STATE_FREE;
             //putting 1 when pass on free square
             map_matrix[get_x_from_index(index)][get_y_from_index(index)] = 1;
+            update_mass(index, -1);
         }
     }
 
@@ -642,14 +655,24 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         return index_y;
     }
 
+/*
     //Sending the map to the wearService
     //maybe doing it it initializing map?????
-    public void sending_map_wear(){
+    public void sending_map_wear() {
         Intent intent_map = new Intent(MainActivity.this, WearService.class);
         intent_map.setAction(WearService.ACTION_SEND.MAPSEND.name());
-        intent_map.putExtra(WearService.MAP, map); //DUNNO how to put the map through an intent
+        //intent_map.putExtra(WearService.MAP, map); //DUNNO how to put the map through an intent
         startService(intent_map);
 
+    }
+*/
+
+    void update_mass(int index, int weight){
+        int pos_x = get_x_from_index(index);
+        int pos_y = get_y_from_index(index);
+        x_mass += (pos_x * weight);
+        y_mass += (pos_y * weight);
+        total_mass += weight;
     }
 
 
@@ -682,6 +705,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                    if(new_F < smallest_F){
                        smallest_F = new_F;
                        index_smalest_F = i;
+                   }else if(new_F == smallest_F){
+                       int[] index_array = new int[2];
+                       index_array[0] = index_smalest_F;
+                       index_array[1] = i;
+                       int index_small = next_free(index_array, index_cur , true);
+                       if(index_array[1] == index_small){
+                           index_smalest_F = i;
+                       }
                    }
                }
            }
@@ -977,18 +1008,40 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
     }
 
+
+    public int is_on_edge(int pos){
+        if(get_neighbor(pos, UP) == -1){
+            return UP;
+        }else if(get_neighbor(pos, RIGHT) == -1){
+            return RIGHT;
+        }else if(get_neighbor(pos, DOWN) == -1) {
+            return DOWN;
+        }else if(get_neighbor(pos, LEFT) == -1) {
+            return LEFT;
+        }else{
+            return -1;
+        }
+    }
+
+
+
+
+
+
     public int next_position_automatic(int pos){
         int pos_next = -1;
         int orientation_wanted = (orientation_robot + 1)%4;
-        int pos_free = -1; // remember the position that is free, but we prefer the position that is unknown
+        int[] pos_free = new int[4]; // remember the position that is free, but we prefer the position that is unknown
         int nb_neighbor = 0;
         int index = get_neighbor(pos, orientation_wanted);
+        int index_free = 0;
         while(nb_neighbor < 4){
             if(index != -1){
                 if(node_array.get(index).State_robot == STATE_UNKNOWN){
                     return index;
                 }else if(node_array.get(index).State_robot == STATE_FREE){
-                    pos_free = index;
+                    pos_free[index_free] = index;
+                    index_free++;
                     orientation_wanted = (orientation_wanted + 1)%4;
                 }else if(node_array.get(index).State_robot == STATE_OBSTACLE){
                     orientation_wanted = (orientation_wanted + 1)%4;
@@ -997,9 +1050,84 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             nb_neighbor++;
             index = get_neighbor(pos, orientation_wanted);
         }
+        int pos_free_choice = next_free(pos_free, pos, false);
+
+        return pos_free_choice;
+    }
 
 
-        return pos_free;
+    public int next_free(int[] free_element, int pos_cur, boolean center_ini){
+        int x_center;
+        int y_center;
+        if(center_ini){
+            x_center = get_x_from_index(position_initial);
+            y_center = get_y_from_index(position_initial);
+        }else{
+            x_center = x_mass/total_mass;
+            y_center = y_mass/total_mass;
+        }
+
+        int difference_x = x_center - get_x_from_index(pos_cur);
+        int difference_y = y_center - get_y_from_index(pos_cur);
+        int[] neighbor_classed = new int[4];
+        if(Math.abs(difference_x) > Math.abs(difference_y)){
+            if(difference_x >= 0){
+                neighbor_classed[0] = get_neighbor(pos_cur, RIGHT);
+                neighbor_classed[3] = get_neighbor(pos_cur, LEFT);
+                if(difference_y >0){
+                    neighbor_classed[1] = get_neighbor(pos_cur, DOWN);
+                    neighbor_classed[2] = get_neighbor(pos_cur, UP);
+                }else{
+                    neighbor_classed[1] = get_neighbor(pos_cur, UP);
+                    neighbor_classed[2] = get_neighbor(pos_cur, DOWN);
+                }
+            }else {
+                neighbor_classed[0] = get_neighbor(pos_cur, LEFT);
+                neighbor_classed[3] = get_neighbor(pos_cur, RIGHT);
+                if (difference_y > 0) {
+                    neighbor_classed[1] = get_neighbor(pos_cur, DOWN);
+                    neighbor_classed[2] = get_neighbor(pos_cur, UP);
+                } else {
+                    neighbor_classed[1] = get_neighbor(pos_cur, UP);
+                    neighbor_classed[2] = get_neighbor(pos_cur, DOWN);
+                }
+            }
+
+        }else{
+            if(difference_y >= 0){
+                neighbor_classed[0] = get_neighbor(pos_cur, DOWN);
+                neighbor_classed[3] = get_neighbor(pos_cur, UP);
+                if(difference_x >0){
+                    neighbor_classed[1] = get_neighbor(pos_cur, RIGHT);
+                    neighbor_classed[2] = get_neighbor(pos_cur, LEFT);
+                }else{
+                    neighbor_classed[1] = get_neighbor(pos_cur, LEFT);
+                    neighbor_classed[2] = get_neighbor(pos_cur, RIGHT);
+                }
+            }else {
+                neighbor_classed[0] = get_neighbor(pos_cur, UP);
+                neighbor_classed[3] = get_neighbor(pos_cur, DOWN);
+                if (difference_x > 0) {
+                    neighbor_classed[1] = get_neighbor(pos_cur, RIGHT);
+                    neighbor_classed[2] = get_neighbor(pos_cur, LEFT);
+                } else {
+                    neighbor_classed[1] = get_neighbor(pos_cur, LEFT);
+                    neighbor_classed[2] = get_neighbor(pos_cur, RIGHT);
+                }
+            }
+
+        }
+
+        int i = 3;
+        while(i < 0 && Arrays.asList(free_element).contains(neighbor_classed[i]) == false){
+            i--;
+        }
+        if(i == -1){
+            return neighbor_classed[0];
+        }else{
+            return neighbor_classed[i];
+        }
+
     }
 
     public void exploration(){
@@ -1054,7 +1182,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                     automatic_mode();
                 }
             }
-            handler.postDelayed(runnableCode, 100);
+            handler.postDelayed(runnableCode, 500);
         }
     };
 

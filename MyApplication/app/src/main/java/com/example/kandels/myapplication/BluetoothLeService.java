@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+//package com.example.kandels.myapplication;
 package com.example.kandels.myapplication;
 
 import android.app.Service;

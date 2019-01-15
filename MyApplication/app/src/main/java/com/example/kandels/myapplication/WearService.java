@@ -1,5 +1,6 @@
 package com.example.kandels.myapplication;
 
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -77,11 +78,11 @@ public class WearService extends WearableListenerService {
 
                 //CREATING A NEW PATH FOR SENDING THE MAP
                 // I THINK THE MAP IS AN ASSET
-            case MAPSEND:
+            /*case MAPSEND:
                 putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_map_path);
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_map, (Asset) intent.getParcelableExtra(MAP) );
                 sendPutDataMapRequest(putDataMapRequest);
-                break;
+                break;*/
             default:
                 Log.w(TAG, "Unknown action");
                 break;
