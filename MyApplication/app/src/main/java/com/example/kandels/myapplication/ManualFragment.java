@@ -62,6 +62,7 @@ public class ManualFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -71,6 +72,8 @@ public class ManualFragment extends Fragment {
         fragmentView = inflater.inflate(R.layout.fragment_manual, container, false);
 
         return(fragmentView);
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

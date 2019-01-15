@@ -68,7 +68,15 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_example_path_asset);
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_some_other_key, (Asset) intent.getParcelableExtra(IMAGE));
                 sendPutDataMapRequest(putDataMapRequest);
+
                 break;
+
+            case DIRECTION:
+                message = intent.getStringExtra(MESSAGE);
+                if(message==null){ message = "";}
+                sendMessage(message, BuildConfig.W_manual_path);
+                break;
+
             default:
                 Log.w(TAG, "Unknown action");
                 break;
@@ -84,6 +92,7 @@ public class WearService extends WearableListenerService {
     public static final String DATAMAP_INT_ARRAYLIST = "DATAMAP_INT_ARRAYLIST";
     public static final String IMAGE = "IMAGE";
     public static final String PATH = "PATH";
+
 
     public static Asset createAssetFromBitmap(Bitmap bitmap) {
         bitmap = resizeImage(bitmap, 390);
@@ -172,15 +181,15 @@ public class WearService extends WearableListenerService {
                         intent.putExtra("REPLACE_THIS_WITH_A_STRING_OF_ARRAYLIST_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY", arraylist);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         break;
-                        //TODO: pass movement functions to watch
-                    /*case BuildConfig.W_profile_path:
+                        //TODO: pass movement functions to watch, and check if correct
+                    case BuildConfig.W_manual_path:
                         Log.v(TAG,"Data changed for path: " + uri);
-                        DataMap dataMap = dataMapItem.getDataMap().getDataMap(BuildConfig.W_profile_key);
-                        String username = dataMap.getString("username");
-                        intent = new Intent(MainActivity.ACTION_RECEIVE_PROFILE_INFO);
-                        intent.putExtra(MainActivity.PROFILE_USERNAME,username);
-                        bitmapFromAsset(dataMap.getAsset("photo"),intent,MainActivity.PROFILE_IMAGE);
-                        break;*/
+                        Intent intent_direction = new Intent(MainActivity.DIRECTION);
+                        intent_direction.putExtra(MainActivity.DIRECTION, data); //DUNNO what to put
+
+                        //sending intent with direction value
+                        LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent_direction);
+                        break;
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
                         //Log.v(TAG,BuildConfig.W_profile_path);
@@ -335,6 +344,6 @@ public class WearService extends WearableListenerService {
 
     // Constants
     public enum ACTION_SEND {
-        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET
+        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, DIRECTION;
     }
 }

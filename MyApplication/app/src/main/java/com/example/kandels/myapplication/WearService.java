@@ -239,6 +239,10 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest.getDataMap().putIntegerArrayList(BuildConfig.W_some_other_key, arrayList);
                 sendPutDataMapRequest(putDataMapRequest);
                 break;
+            case BuildConfig.W_manual_path:
+                Intent intent = new Intent(MainActivity.WEAR_DIRECTION);  //declare main app
+                intent.putExtra(MainActivity.DIRECTION, data);  //declare as well
+                LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent);
             default:
                 Log.w(TAG, "Received a message for unknown path " + path + " : " + new String(messageEvent.getData()));
         }

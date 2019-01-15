@@ -19,12 +19,10 @@ import java.util.Collections;
 
 public class MainActivity extends WearableActivity {
 
-
-    public static final String ACTION_RECEIVE_PROFILE_INFO = "RECEIVE_PROFILE_INFO";
-    public static final String PROFILE_IMAGE = "PROFILE_IMAGE";
-    public static final String PROFILE_USERNAME = "PROFILE_USERNAME";
+    public static final String DIRECTION = "DIRECTION";
 
     private TextView mTextView;
+    private TextView startButtonView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,39 +35,68 @@ public class MainActivity extends WearableActivity {
         setAmbientEnabled();
 
 
-        /*LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //ImageView imageView = findViewById(R.id.wearImageView);
-                //TextView textView = findViewById(R.id.wearTextView);
-                //get the image and the text from the main
 
-                byte[] byteArray = intent.getByteArrayExtra(PROFILE_IMAGE);
-                Bitmap bmpProfile = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                //imageView.setImageBitmap(bmpProfile);
+                Intent intent_direction = new Intent(MainActivity.this, WearService.class);
+                intent_direction.setAction(WearService.ACTION_SEND.DIRECTION.name());
 
-                String username = intent.getStringExtra(PROFILE_USERNAME);
-                //textView.setText("Welcome "+username + "!");
+
+                //NOT sure if will get the right value or not
+                String var_dir = intent_direction.getStringExtra("DIRECTION");
+
+                startButtonView = findViewById(R.id.button1); //convert id int in string
+                String buttonText = startButtonView.getText().toString();
+
+
+
+
+                //TODO: switch with de direction variable depending on which button pulsed
+
+                switch (var_dir){
+                    case "START":
+                        intent_direction.putExtra("START", 0);
+                        break;
+                    case "UP":
+                        intent_direction.putExtra("UP", 1);
+                        break;
+                    case "DOWN":
+                        intent_direction.putExtra("DOWN", 2);
+                        break;
+                    case "LEFT":
+                        intent_direction.putExtra("LEFT", 3);
+                        break;
+                    case "RIGHT":
+                        intent_direction.putExtra("RIGHT", 4);
+                        break;
+                }
+                intent_direction.putExtra(WearService.MESSAGE, var_dir);
+
+                startService(intent_direction);
+
 
             }
-        }, new IntentFilter(ACTION_RECEIVE_PROFILE_INFO));*/
+        }, new IntentFilter(DIRECTION)); //NOT SURE
 
 
     }
 
     //TODO call these functions when we want to start activity, send a message etc...
     
-    /*public void sendStart(View view) {
-        Intent intent = new Intent(this, WearService.class);
-        intent.setAction(WearService.ACTION_SEND.STARTACTIVITY.name());
-        intent.putExtra(WearService.ACTIVITY_TO_START, BuildConfig.W_mainactivity);
-        startService(intent);
-    }
+
     public void sendMessage(View view) {
         Intent intent = new Intent(this, WearService.class);
         intent.setAction(WearService.ACTION_SEND.MESSAGE.name());
         intent.putExtra(WearService.MESSAGE, "Messaging other device!");
         intent.putExtra(WearService.PATH, BuildConfig.W_example_path_text);
+        startService(intent);
+    }
+
+        /*public void sendStart(View view) {
+        Intent intent = new Intent(this, WearService.class);
+        intent.setAction(WearService.ACTION_SEND.STARTACTIVITY.name());
+        intent.putExtra(WearService.ACTIVITY_TO_START, BuildConfig.W_mainactivity);
         startService(intent);
     }
     public void sendDatamap(View view) {

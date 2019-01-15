@@ -118,5 +118,37 @@
 
     </LinearLayout>
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+        <Button
+            android:id="@+id/btnShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="280dp"
+            android:layout_marginTop="400dp"
+            android:text="Show Spinner"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btnHide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btnShow"
+            android:layout_toRightOf="@+id/btnShow"
+            android:text="Hide Spinner"
+            android:visibility="gone"/>
+        <ProgressBar
+            android:id="@+id/pBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/btnShow"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+
+
 
 </android.support.constraint.ConstraintLayout>

@@ -8,9 +8,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 
 public class PresentationActivity extends AppCompatActivity {
 
+
+    private ProgressBar pgsBar;
+    private Button showbtn, hidebtn;
     private static final int SCAN_CODE = 1;
 
     private String deviceAddress;
@@ -30,7 +35,11 @@ public class PresentationActivity extends AppCompatActivity {
         manualActivity.putExtra(MainActivity.EXTRAS_DEVICE_ADDRESS, deviceAddress);
         manualActivity.putExtra(MainActivity.EXTRAS_DEVICE_NAME, deviceAddress);
 
+
+
         startActivity(manualActivity);
+
+
     }
 
     public void StartAutomatic(View view){

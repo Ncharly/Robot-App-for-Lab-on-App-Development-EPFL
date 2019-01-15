@@ -26,9 +26,20 @@ import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +60,34 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     Button button_start;
     Button button_go_back;
 
+
+
+    //FIREBASE
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference myRef;
+
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth mAuth;
+
+    firebaseDatabase = FirebaseDatabase.getInstance();
+    myRef = firebaseDatabase.getReference().child("Books");
+
+    mAuth = FirebaseAuth.getInstance();
+    firebaseUser = mAuth.getCurrentUser();
+
+        if (firebaseUser != null) {
+        mUsername = firebaseUser.getDisplayName();
+    }
+
+        if (getIntent().hasExtra("Selected Club")) {
+        selectedClub = getIntent().getStringExtra("Selected Club");
+    }
+
+
+    private ProgressBar pgsBar;
+    private Button showbtn, hidebtn;
+
     //BLE
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
@@ -65,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
+
+    public static final String DIRECTION="";
+    public static final String WEAR_DIRECTION="";
 
 
     public BluetoothGattCharacteristic JackiModeCharacteristic;   // 0000fff1-0000-1000-8000-00805f9b34fb
@@ -224,6 +266,31 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         boolean bError = true;
         mRunning = false;
 
+        // Start WearService
+        Intent intent_start_wear= new Intent(this, WearService.class);
+        startActivity(intent_start_wear);
+
+
+
+
+        /*
+        //TODO check how to make it appear
+        pgsBar = (ProgressBar) findViewById(R.id.pBar);
+        showbtn = (Button)findViewById(R.id.btnShow);
+        hidebtn = (Button)findViewById(R.id.btnHide);
+        showbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pgsBar.setVisibility(v.VISIBLE);
+            }
+        });
+        hidebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pgsBar.setVisibility(v.GONE);
+            }
+        }); */
+
         // Start robot control screen in response to button
         // start only if connected to a Jacki RSLK with the correct version of ASEE running
         if(mGattCharacteristics.size() > 3) {
@@ -290,8 +357,19 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         change_state_square(position_robot, STATE_FREE);
         handler.post(runnableCode);
 
+        sendManualValuesToWatch();
 
 
+
+        //wear
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String data = intent.getStringExtra(DIRECTION); //public static final string direction
+                //ensuite up down etc...
+            }
+        }, new IntentFilter(WEAR_DIRECTION)); //public etc...
+        //TODO, complete with wear direction and calling appropriate functions
 
     }
 
@@ -406,7 +484,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         //       mBluetoothLeService.readCharacteristic(JackiSwitchCharacteristic);
         mBluetoothLeService.readCharacteristic(JackiSensorCharacteristic);
     }
-
 
 
     // MAP
@@ -535,9 +612,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         return index_y;
     }
 
-
-
-
     // A* Algorithm
 
     int search_next_node(int index_ini, int index_fin, int index_cur){
@@ -598,9 +672,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         Collections.reverse(path_back);
         path_back.remove(0);
     }
-
-
-
 
     // Robot function
 
@@ -665,9 +736,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         return index_neighbor;
     }
-
-
-
 
     // MANUAL
 
@@ -799,7 +867,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
     }
 
-
     public void StartMovement(View view) {
         button_start = findViewById(R.id.button_start);
         if(button_start.getText()==getString(R.string.Start)){
@@ -828,13 +895,30 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
+    public void manual_wear_movement(String wear_direction){
 
+        switch (wear_direction){
+            View view = new View(); //dunno if I pu the button's ids or not
+            case "START":
+                StartMovement(view);
+                break;
+            case "UP":
+                UpMovement(view);
+                break;
+            case "DOWN":
+                DownMovement(view);
+                break;
+            case "LEFT":
+                LeftMovement(view);
+                break;
+            case "RIGHT":
+                RightMovement(view);
+                break;
 
+        }
+    }
 
-
-    // AUTOMATIC
-    //TODO regarder ce que j'ai mal fait avec ces boutons
-
+    //AUTOMATIC
 
     public void AutomaticMovement(View view) {
         Button button_auto = findViewById(R.id.button_automatic);
@@ -871,11 +955,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
     }
 
-
-
-
-
-
     public int next_position_automatic(int pos){
         int pos_next = -1;
         int orientation_wanted = (orientation_robot + 1)%4;
@@ -909,9 +988,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
-
-    //CHECK TOMORROW
-
     public void automatic_go_back(View view) {
        if(button_start != null) {
            button_go_back = findViewById(R.id.button_go_back_automatic);
@@ -933,9 +1009,12 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
 
-
-
-
+    private void sendManualValuesToWatch() {
+        Intent intentWear = new Intent(MainActivity.this,WearService.class);
+        //intentWear.setAction(WearService.ACTION_SEND.PROFILE_SEND.name());
+        //intentWear.putExtra(WearService.PROFILE,userProfile);
+        startService(intentWear);
+    }
 
 
     @Override
@@ -960,10 +1039,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                     automatic_mode();
                 }
             }
-
-
-
-
             handler.postDelayed(runnableCode, 100);
         }
     };

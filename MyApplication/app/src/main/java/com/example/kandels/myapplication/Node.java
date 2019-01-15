@@ -56,9 +56,6 @@ public class Node {
         return change_parent;
     }
 
-
-
-
     void getF(){
         F = G + H;
     }
@@ -66,7 +63,6 @@ public class Node {
     void setState(int state){
         State = state;
     }
-
 
     int get_index_parent(){
         int index = ParentNode.Index[0];
