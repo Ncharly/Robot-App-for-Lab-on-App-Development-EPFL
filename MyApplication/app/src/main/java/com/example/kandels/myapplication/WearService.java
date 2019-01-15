@@ -77,11 +77,11 @@ public class WearService extends WearableListenerService {
 
                 //CREATING A NEW PATH FOR SENDING THE MAP
                 // I THINK THE MAP IS AN ASSET
-            case MAPSEND:
+            /*case MAPSEND:
                 putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_map_path);
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_map, (Asset) intent.getParcelableExtra(MAP) );
                 sendPutDataMapRequest(putDataMapRequest);
-                break;
+                break; */
             default:
                 Log.w(TAG, "Unknown action");
                 break;
@@ -97,6 +97,7 @@ public class WearService extends WearableListenerService {
     public static final String DATAMAP_INT_ARRAYLIST = "DATAMAP_INT_ARRAYLIST";
     public static final String IMAGE = "IMAGE";
     public static final String PATH = "PATH";
+    public static final String PATH_START = "START";
 
     public static Asset createAssetFromBitmap(Bitmap bitmap) {
         bitmap = resizeImage(bitmap, 390);

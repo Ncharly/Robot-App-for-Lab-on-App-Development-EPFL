@@ -79,18 +79,31 @@ public class WearService extends WearableListenerService {
 
                 //TODO send these values to wear app service
             case SENDSTART:
-                String message_start = intent.getStringExtra(MESSAGE);
+                String message_start = "START";
                 if (message_start == null) message_start = "";
-                sendMessage(message_start, intent.getStringExtra(PATH));
+                sendMessage(message_start, intent.getStringExtra(PATH_START));
                 break;
             case SENDUP:
+                String message_up = "UP";
+                if (message_up == null) message_up = "";
+                sendMessage(message_up, intent.getStringExtra(PATH_UP));
                 break;
             case SENDDOWN:
+                String message_down = "DOWN";
+                if (message_down == null) message_down = "";
+                sendMessage(message_down, intent.getStringExtra(PATH_DOWN));
                 break;
             case SENDLEFT:
+                String message_left = "LEFT";
+                if (message_left == null) message_left = "";
+                sendMessage(message_left, intent.getStringExtra(PATH_LEFT));
                 break;
             case SENDRIGHT:
+                String message_right = "RIGHT";
+                if (message_right == null) message_right = "";
+                sendMessage(message_right, intent.getStringExtra(PATH_RIGHT));
                 break;
+
 
             case DIRECTION:
                 message = intent.getStringExtra(MESSAGE);
@@ -113,6 +126,11 @@ public class WearService extends WearableListenerService {
     public static final String DATAMAP_INT_ARRAYLIST = "DATAMAP_INT_ARRAYLIST";
     public static final String IMAGE = "IMAGE";
     public static final String PATH = "PATH";
+    public static final String PATH_START = "START";
+    public static final String PATH_UP = "UP";
+    public static final String PATH_DOWN = "DOWN";
+    public static final String PATH_LEFT = "LEFT";
+    public static final String PATH_RIGHT = "RIGHT";
 
 
     public static Asset createAssetFromBitmap(Bitmap bitmap) {
@@ -204,7 +222,7 @@ public class WearService extends WearableListenerService {
                         break;
 
                         //TODO: pass movement functions to watch, and check if correct
-                    /*case BuildConfig.W_manual_path:
+                   /* case BuildConfig.W_manual_path:
                         Log.v(TAG,"Data changed for path: " + uri);
                         Intent intent_direction = new Intent(MainActivity.DIRECTION);
                         intent_direction.putExtra(MainActivity.DIRECTION, MESSAGE); //DUNNO what to put
@@ -213,13 +231,13 @@ public class WearService extends WearableListenerService {
                         LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent_direction);
                         break; */
 
-                    case BuildConfig.W_map_path:
+                    /*case BuildConfig.W_map_path:
 
                         Log.v(TAG,"Data changed for path: " + uri);
                         Asset asset_map = dataMapItem.getDataMap().getAsset(BuildConfig.W_map);
                         intent = new Intent(MainActivity.ACTION_MAP_RECEIVED); //TO COMPLETE
                         bitmapFromAsset(asset_map, intent, MainActivity.MAP_IMAGE);
-                        break;
+                        break; */
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
                         //Log.v(TAG,BuildConfig.W_profile_path);

@@ -44,10 +44,10 @@ public class MainActivity extends WearableActivity {
 
                 //GETTING IMAGE OF THE MAP
                 //TODO create an imageview with the id wearimageview
-                ImageView imageView = findViewById(R.id.wearImageView);
+                //ImageView imageView = findViewById(R.id.wearImageView);
                 byte[] byteArray = intent.getByteArrayExtra(MAP_IMAGE);
                 Bitmap bmpMap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                imageView.setImageBitmap(bmpMap);
+                //imageView.setImageBitmap(bmpMap);
 
             }
         }, new IntentFilter(ACTION_MAP_RECEIVED));
@@ -92,32 +92,4 @@ public class MainActivity extends WearableActivity {
         startService(intent_start);
     }
 
-
-        /*public void sendStart(View view) {
-        Intent intent = new Intent(this, WearService.class);
-        intent.setAction(WearService.ACTION_SEND.STARTACTIVITY.name());
-        intent.putExtra(WearService.ACTIVITY_TO_START, BuildConfig.W_mainactivity);
-        startService(intent);
-    }
-    public void sendDatamap(View view) {
-        int some_value = 420;
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        Collections.addAll(arrayList, 105, 107, 109, 1010);
-        Intent intent = new Intent(this, WearService.class);
-        intent.setAction(WearService.ACTION_SEND.EXAMPLE_DATAMAP.name());
-        intent.putExtra(WearService.DATAMAP_INT, some_value);
-        intent.putExtra(WearService.DATAMAP_INT_ARRAYLIST, arrayList);
-        startService(intent);
-    }
-    public void sendBitmap(View view) {
-// Get bitmap data (can come from elsewhere) and
-// convert it to a rescaled asset
-        Bitmap bmp = BitmapFactory.decodeResource(
-                getResources(), R.drawable.wikipedia_logo);
-        Asset asset = WearService.createAssetFromBitmap(bmp);
-        Intent intent = new Intent(this, WearService.class);
-        intent.setAction(WearService.ACTION_SEND.EXAMPLE_ASSET.name());
-        intent.putExtra(WearService.IMAGE, asset);
-        startService(intent);
-    }*/
 }

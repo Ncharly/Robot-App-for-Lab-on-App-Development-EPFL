@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         handler.post(runnableCode);
 
         //TODO: complete wear functions
-        sending_map_wear();
+        //sending_map_wear();
 
 
         //TODO check if it's in the oncreate or not
@@ -367,27 +367,18 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                     String direction_received = intent.getStringExtra(DIRECTION_RECEIVED);
                     switch (direction_received){
                          case "START":
-                            //modify robot's position
-                            //StartMovement(view);
+                             mRunning = true;
                             break;
                         case "UP":
-                            //modify robot's position
-                            //UpMovement(view);
                             rotate(UP);
                             break;
                         case "DOWN":
-                            //modify robot's position
-                            //DownMovement(view);
                             rotate(DOWN);
                             break;
                         case "LEFT":
-                            //modify robot's position
-                            //LeftMovement(view);
                             rotate(LEFT);
                             break;
                         case "RIGHT":
-                            //modify robot's position
-                            //RightMovement(view);
                             rotate(RIGHT);
                             break;
                     }
@@ -643,14 +634,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     //Sending the map to the wearService
-    //maybe doing it it initializing map?????
-    public void sending_map_wear(){
+    
+    /*public void sending_map_wear(){
         Intent intent_map = new Intent(MainActivity.this, WearService.class);
         intent_map.setAction(WearService.ACTION_SEND.MAPSEND.name());
         intent_map.putExtra(WearService.MAP, map); //DUNNO how to put the map through an intent
         startService(intent_map);
 
-    }
+    } */
 
 
 

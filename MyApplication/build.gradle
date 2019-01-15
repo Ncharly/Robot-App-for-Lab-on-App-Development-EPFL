@@ -34,7 +34,12 @@ allprojects {
                 mainactivity : "MainActivity",
                 a_key : "a_value",
                 some_other_key : "some_other_value",
-                manual_path : "/direction"
+                manual_path : "/direction",
+                start_path : "/start",
+                up_path : "/up",
+                down_path : "/down",
+                left_path : "/left",
+                right_path : "/right"
         ]
     }
 
