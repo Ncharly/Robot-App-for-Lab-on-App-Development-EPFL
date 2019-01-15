@@ -46,10 +46,10 @@ public class MainActivity extends WearableActivity {
                 //NOT sure if will get the right value or not
                 String var_dir = intent_direction.getStringExtra("DIRECTION");
 
-                startButtonView = findViewById(R.id.button1); //convert id int in string
+
+                //Convert start button id into string
+                startButtonView = findViewById(R.id.button1);
                 String buttonText = startButtonView.getText().toString();
-
-
 
 
                 //TODO: switch with de direction variable depending on which button pulsed

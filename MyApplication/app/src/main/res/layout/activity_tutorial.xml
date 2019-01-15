@@ -34,7 +34,6 @@
                     android:id="@+id/TutorialText0"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="casual"
                     android:gravity="center_horizontal"
                     android:text="@string/tutorial"
                     android:textColor="@android:color/holo_blue_dark"
@@ -44,7 +43,6 @@
                     android:id="@+id/TutorialText1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="casual"
                     android:text="@string/TutorialText1"
                     android:textAlignment="viewStart"
                     android:textSize="18sp" />
@@ -53,7 +51,6 @@
                     android:id="@+id/TutorialText2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="casual"
                     android:text="@string/TutorialText2"
                     android:textAlignment="viewStart"
                     android:textSize="18sp" />
@@ -62,7 +59,6 @@
                     android:id="@+id/tutorialText3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="casual"
                     android:text="@string/TutorialText3"
                     android:textAlignment="viewStart"
                     android:textSize="18sp" />

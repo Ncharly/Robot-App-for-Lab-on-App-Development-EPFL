@@ -181,11 +181,12 @@ public class WearService extends WearableListenerService {
                         intent.putExtra("REPLACE_THIS_WITH_A_STRING_OF_ARRAYLIST_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY", arraylist);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         break;
+
                         //TODO: pass movement functions to watch, and check if correct
                     case BuildConfig.W_manual_path:
                         Log.v(TAG,"Data changed for path: " + uri);
                         Intent intent_direction = new Intent(MainActivity.DIRECTION);
-                        intent_direction.putExtra(MainActivity.DIRECTION, data); //DUNNO what to put
+                        intent_direction.putExtra(MainActivity.DIRECTION, MESSAGE); //DUNNO what to put
 
                         //sending intent with direction value
                         LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent_direction);

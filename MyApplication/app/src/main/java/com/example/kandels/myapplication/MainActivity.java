@@ -70,20 +70,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private FirebaseUser firebaseUser;
     private FirebaseAuth mAuth;
 
-    firebaseDatabase = FirebaseDatabase.getInstance();
-    myRef = firebaseDatabase.getReference().child("Books");
-
-    mAuth = FirebaseAuth.getInstance();
-    firebaseUser = mAuth.getCurrentUser();
-
-        if (firebaseUser != null) {
-        mUsername = firebaseUser.getDisplayName();
-    }
-
-        if (getIntent().hasExtra("Selected Club")) {
-        selectedClub = getIntent().getStringExtra("Selected Club");
-    }
-
 
     private ProgressBar pgsBar;
     private Button showbtn, hidebtn;
@@ -148,12 +134,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     static final int RIGHT = 1;
     static final int DOWN = 2;
     static final int LEFT = 3;
-
-    static final int NORTHERN = 0;
-    static final int SOUTHERN = 1;
-    static final int EASTERN = 2;
-    static final int WESTERN = 3;
-
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new
@@ -266,12 +246,28 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         boolean bError = true;
         mRunning = false;
 
+        // FIREBASE
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = firebaseDatabase.getReference().child("Path");
+
+        mAuth = FirebaseAuth.getInstance();
+        firebaseUser = mAuth.getCurrentUser();
+
+     /*   if (firebaseUser != null) {
+        mUsername = firebaseUser.getDisplayName();
+    }
+
+        if (getIntent().hasExtra("Selected Club")) {
+        selectedClub = getIntent().getStringExtra("Selected Club");
+    }*/
+
+
+
+
         // Start WearService
         Intent intent_start_wear= new Intent(this, WearService.class);
         startActivity(intent_start_wear);
-
-
-
 
         /*
         //TODO check how to make it appear
@@ -360,16 +356,43 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         sendManualValuesToWatch();
 
 
-
+        //TODO complete this part
         //wear
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String data = intent.getStringExtra(DIRECTION); //public static final string direction
                 //ensuite up down etc...
+                switch (data){
+                    case "START":
+                        //modify robot's position
+                        //StartMovement(view);
+                        break;
+                    case "UP":
+                        //modify robot's position
+                        //UpMovement(view);
+                        rotate(UP);
+                        break;
+                    case "DOWN":
+                        //modify robot's position
+                        //DownMovement(view);
+                        rotate(DOWN);
+                        break;
+                    case "LEFT":
+                        //modify robot's position
+                        //LeftMovement(view);
+                        rotate(LEFT);
+                        break;
+                    case "RIGHT":
+                        //modify robot's position
+                        //RightMovement(view);
+                        rotate(RIGHT);
+                        break;
+
+                }
             }
+
         }, new IntentFilter(WEAR_DIRECTION)); //public etc...
-        //TODO, complete with wear direction and calling appropriate functions
 
     }
 
@@ -479,7 +502,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     private void ReadSensors(){
-        VerifyConnection();  // back sure Jacki is connected
+        VerifyConnection();
         //       mBluetoothLeService.readCharacteristic(JackiModeCharacteristic);
         //       mBluetoothLeService.readCharacteristic(JackiSwitchCharacteristic);
         mBluetoothLeService.readCharacteristic(JackiSensorCharacteristic);
@@ -794,14 +817,16 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         byte data[] ={4}; // left command
 
         rotate(LEFT);
-        /*
-        VerifyConnection();  // back sure Jacki is connected
+
+
+        /*VerifyConnection();  // back sure Jacki is connected
         JackiModeCharacteristic.setValue(data);
         // JackiModeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
         mBluetoothLeService.writeCharacteristic(JackiModeCharacteristic);
         //UpdateSensorStatus();
-        //     ReadSensors();
+        //ReadSensors();
         */
+
     }
 
     public void manual_mode(){
@@ -895,7 +920,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     }
 
-    public void manual_wear_movement(String wear_direction){
+    /*public void manual_wear_movement(String wear_direction){
 
         switch (wear_direction){
             View view = new View(); //dunno if I pu the button's ids or not
@@ -916,7 +941,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                 break;
 
         }
-    }
+    } */
 
     //AUTOMATIC
 
@@ -1011,8 +1036,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     private void sendManualValuesToWatch() {
         Intent intentWear = new Intent(MainActivity.this,WearService.class);
-        //intentWear.setAction(WearService.ACTION_SEND.PROFILE_SEND.name());
-        //intentWear.putExtra(WearService.PROFILE,userProfile);
         startService(intentWear);
     }
 
@@ -1044,24 +1067,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     };
 
 
-     /* private void addProfileToFirebaseDB() {
-        profileRef.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData
-                                                            mutableData) {
-                mutableData.child("username").setValue(userProfile.username);
-                mutableData.child("password").setValue(userProfile.password);
-                mutableData.child("height").setValue(userProfile.height_cm);
-                mutableData.child("weight").setValue(userProfile.weight_kg);
-                return Transaction.success(mutableData);
-            }
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError,
-                                   boolean b, @Nullable DataSnapshot
-                                           dataSnapshot) {
-            }
-        });
-    } */
+
 
 }
