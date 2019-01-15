@@ -63,33 +63,51 @@ public class MainActivity extends WearableActivity {
 
     public void onclick_start_wear(View view) {
         Intent intent_start = new Intent(MainActivity.this, WearService.class);
-        intent_start.setAction(WearService.ACTION_SEND.SENDSTART.name());
-        intent_start.putExtra(WearService.START, "START");
+        //intent_start.setAction(WearService.ACTION_SEND.SENDSTART.name());
+        intent_start.setAction(WearService.ACTION_SEND.DIRECTION.name());
+        //intent_start.putExtra(WearService.START, "START");
+        intent_start.putExtra(WearService.MESSAGE, "START");
         startService(intent_start);
     }
     public void onclick_up_wear(View view) {
-        Intent intent_start = new Intent(MainActivity.this, WearService.class);
-        intent_start.setAction(WearService.ACTION_SEND.SENDUP.name());
-        intent_start.putExtra(WearService.UP, "UP");
-        startService(intent_start);
+        Intent intent_up = new Intent(MainActivity.this, WearService.class);
+        //intent_start.setAction(WearService.ACTION_SEND.SENDUP.name());
+        intent_up.setAction(WearService.ACTION_SEND.DIRECTION.name());
+        intent_up.putExtra(WearService.MESSAGE, "UP");
+        //intent_up.putExtra(WearService.UP, "UP");
+        startService(intent_up);
     }
     public void onclick_down_wear(View view) {
-        Intent intent_start = new Intent(MainActivity.this, WearService.class);
-        intent_start.setAction(WearService.ACTION_SEND.SENDDOWN.name());
-        intent_start.putExtra(WearService.DOWN, "DOWN");
-        startService(intent_start);
+        Intent intent_down = new Intent(MainActivity.this, WearService.class);
+        //intent_start.setAction(WearService.ACTION_SEND.SENDDOWN.name());
+        //intent_start.putExtra(WearService.DOWN, "DOWN");
+        intent_down.setAction(WearService.ACTION_SEND.DIRECTION.name());
+        intent_down.putExtra(WearService.MESSAGE, "DOWN");
+        startService(intent_down);
     }
     public void onclick_left_wear(View view) {
-        Intent intent_start = new Intent(MainActivity.this, WearService.class);
-        intent_start.setAction(WearService.ACTION_SEND.SENDLEFT.name());
-        intent_start.putExtra(WearService.LEFT, "LEFT");
-        startService(intent_start);
+        Intent intent_left = new Intent(MainActivity.this, WearService.class);
+        //intent_start.setAction(WearService.ACTION_SEND.SENDLEFT.name());
+        //intent_start.putExtra(WearService.LEFT, "LEFT");
+        intent_left.setAction(WearService.ACTION_SEND.DIRECTION.name());
+        intent_left.putExtra(WearService.MESSAGE, "LEFT");
+        startService(intent_left);
     }
     public void onclick_right_wear(View view) {
-        Intent intent_start = new Intent(MainActivity.this, WearService.class);
-        intent_start.setAction(WearService.ACTION_SEND.SENDRIGHT.name());
-        intent_start.putExtra(WearService.RIGHT, "RIGHT");
-        startService(intent_start);
+        Intent intent_right = new Intent(MainActivity.this, WearService.class);
+        //intent_start.setAction(WearService.ACTION_SEND.SENDRIGHT.name());
+        //intent_start.putExtra(WearService.RIGHT, "RIGHT");
+        intent_right.setAction(WearService.ACTION_SEND.DIRECTION.name());
+        intent_right.putExtra(WearService.MESSAGE, "RIGHT");
+        startService(intent_right);
+    }
+    public void onclick_back_wear(View view) {
+        Intent intent_back = new Intent(MainActivity.this, WearService.class);
+        //intent_start.setAction(WearService.ACTION_SEND.SENDRIGHT.name());
+        //intent_start.putExtra(WearService.RIGHT, "RIGHT");
+        intent_back.setAction(WearService.ACTION_SEND.DIRECTION.name());
+        intent_back.putExtra(WearService.MESSAGE, "BACK");
+        startService(intent_back);
     }
 
 }

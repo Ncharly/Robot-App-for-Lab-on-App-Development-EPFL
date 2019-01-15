@@ -70,6 +70,7 @@
         android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="Back"
+        android:onClick="onclick_back_wear"
         android:textSize="@dimen/screen_percentage_05" />
 
 

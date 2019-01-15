@@ -78,7 +78,7 @@ public class WearService extends WearableListenerService {
 
 
                 //TODO send these values to wear app service
-            case SENDSTART:
+            /*case SENDSTART:
                 String message_start = "START";
                 if (message_start == null) message_start = "";
                 sendMessage(message_start, intent.getStringExtra(PATH_START));
@@ -102,13 +102,13 @@ public class WearService extends WearableListenerService {
                 String message_right = "RIGHT";
                 if (message_right == null) message_right = "";
                 sendMessage(message_right, intent.getStringExtra(PATH_RIGHT));
-                break;
+                break; */
 
 
             case DIRECTION:
                 message = intent.getStringExtra(MESSAGE);
                 if(message==null){ message = "";}
-                sendMessage(message, BuildConfig.W_manual_path);
+                sendMessage(message, BuildConfig.W_direction_path);
                 break;
 
             default:

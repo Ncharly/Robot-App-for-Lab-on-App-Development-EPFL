@@ -1,5 +1,6 @@
 package com.example.kandels.myapplication;
 
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -74,7 +75,6 @@ public class WearService extends WearableListenerService {
                 sendPutDataMapRequest(putDataMapRequest);
                 break;
 
-
                 //CREATING A NEW PATH FOR SENDING THE MAP
                 // I THINK THE MAP IS AN ASSET
             /*case MAPSEND:
@@ -97,7 +97,6 @@ public class WearService extends WearableListenerService {
     public static final String DATAMAP_INT_ARRAYLIST = "DATAMAP_INT_ARRAYLIST";
     public static final String IMAGE = "IMAGE";
     public static final String PATH = "PATH";
-    public static final String PATH_START = "START";
 
     public static Asset createAssetFromBitmap(Bitmap bitmap) {
         bitmap = resizeImage(bitmap, 390);
@@ -189,7 +188,7 @@ public class WearService extends WearableListenerService {
 
 
                         //TODO SEND DATA TO MAIN ACTIVITY to DIRECTION_RECEIVED
-                    case BuildConfig.W_start_path:
+                    /*case BuildConfig.W_start_path:
                         DataMap dataMap_start = dataMapItem.getDataMap().getDataMap(BuildConfig.W_start_path);
                         String start = dataMap_start.getString("START");
                         intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
@@ -218,7 +217,18 @@ public class WearService extends WearableListenerService {
                         String right = dataMap_right.getString("RIGHT");
                         intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
                         intent.putExtra(MainActivity.DIRECTION_RECEIVED,right);
+                        break; */
+
+                    //GETTING THE MESSAGE FROM THE PULSED BUTTON
+                    // I THINK WE ONLY NEED ONE CASE
+
+                    case BuildConfig.W_direction_path:
+                        DataMap dataMap_right = dataMapItem.getDataMap().getDataMap(BuildConfig.W_right_path);
+                        String direction_wear = dataMap_right.getString(MESSAGE);
+                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,direction_wear);
                         break;
+
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
                         //Log.v(TAG,BuildConfig.W_profile_path);
