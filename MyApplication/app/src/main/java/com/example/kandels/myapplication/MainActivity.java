@@ -91,8 +91,12 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
 
-    public static final String DIRECTION="";
-    public static final String WEAR_DIRECTION="";
+
+
+    //WEAR RECEIVED VALUES
+
+    public static final String DIRECTION_RECEIVED="DIRECTION";
+    public static final String ACTION_WEAR_DIRECTION="ACTION_WEAR_DIRECTION";
 
 
     public BluetoothGattCharacteristic JackiModeCharacteristic;   // 0000fff1-0000-1000-8000-00805f9b34fb
@@ -263,12 +267,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }*/
 
 
-
-
-        // Start WearService
-        Intent intent_start_wear= new Intent(this, WearService.class);
-        startActivity(intent_start_wear);
-
         /*
         //TODO check how to make it appear
         pgsBar = (ProgressBar) findViewById(R.id.pBar);
@@ -353,7 +351,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         change_state_square(position_robot, STATE_FREE);
         handler.post(runnableCode);
 
-        sendManualValuesToWatch();
+        //TODO: complete wear functions
+        sending_map_wear();
 
 
         //TODO complete this part
@@ -361,9 +360,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String data = intent.getStringExtra(DIRECTION); //public static final string direction
+                String direction_received = intent.getStringExtra(DIRECTION_RECEIVED); //public static final string direction
                 //ensuite up down etc...
-                switch (data){
+                switch (direction_received){
                     case "START":
                         //modify robot's position
                         //StartMovement(view);
@@ -392,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                 }
             }
 
-        }, new IntentFilter(WEAR_DIRECTION)); //public etc...
+        }, new IntentFilter(ACTION_WEAR_DIRECTION)); //public etc...
 
     }
 
@@ -634,6 +633,19 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
         return index_y;
     }
+
+    //Sending the map to the wearService
+    //maybe doing it it initializing map?????
+    public void sending_map_wear(){
+        Intent intent_map = new Intent(MainActivity.this, WearService.class);
+        intent_map.setAction(WearService.ACTION_SEND.MAPSEND.name());
+        intent_map.putExtra(WearService.MAP, map); //DUNNO how to put the map through an intent
+        startService(intent_map);
+
+    }
+
+
+
 
     // A* Algorithm
 
@@ -1033,11 +1045,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
        }
     }
 
-
-    private void sendManualValuesToWatch() {
-        Intent intentWear = new Intent(MainActivity.this,WearService.class);
-        startService(intentWear);
-    }
 
 
     @Override

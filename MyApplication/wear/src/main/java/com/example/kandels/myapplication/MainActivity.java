@@ -20,6 +20,8 @@ import java.util.Collections;
 public class MainActivity extends WearableActivity {
 
     public static final String DIRECTION = "DIRECTION";
+    public static final String MAP_IMAGE = "MAP_IMAGE";
+    public static final String ACTION_MAP_RECEIVED = "ACTION_MAP_RECEIVED";
 
     private TextView mTextView;
     private TextView startButtonView;
@@ -31,6 +33,7 @@ public class MainActivity extends WearableActivity {
 
         mTextView = (TextView) findViewById(R.id.text);
 
+
         // Enables Always-on
         setAmbientEnabled();
 
@@ -39,59 +42,56 @@ public class MainActivity extends WearableActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                Intent intent_direction = new Intent(MainActivity.this, WearService.class);
-                intent_direction.setAction(WearService.ACTION_SEND.DIRECTION.name());
-
-
-                //NOT sure if will get the right value or not
-                String var_dir = intent_direction.getStringExtra("DIRECTION");
-
-
-                //Convert start button id into string
-                startButtonView = findViewById(R.id.button1);
-                String buttonText = startButtonView.getText().toString();
-
-
-                //TODO: switch with de direction variable depending on which button pulsed
-
-                switch (var_dir){
-                    case "START":
-                        intent_direction.putExtra("START", 0);
-                        break;
-                    case "UP":
-                        intent_direction.putExtra("UP", 1);
-                        break;
-                    case "DOWN":
-                        intent_direction.putExtra("DOWN", 2);
-                        break;
-                    case "LEFT":
-                        intent_direction.putExtra("LEFT", 3);
-                        break;
-                    case "RIGHT":
-                        intent_direction.putExtra("RIGHT", 4);
-                        break;
-                }
-                intent_direction.putExtra(WearService.MESSAGE, var_dir);
-
-                startService(intent_direction);
-
+                //GETTING IMAGE OF THE MAP
+                //TODO create an imageview with the id wearimageview
+                ImageView imageView = findViewById(R.id.wearImageView);
+                byte[] byteArray = intent.getByteArrayExtra(MAP_IMAGE);
+                Bitmap bmpMap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                imageView.setImageBitmap(bmpMap);
 
             }
-        }, new IntentFilter(DIRECTION)); //NOT SURE
+        }, new IntentFilter(ACTION_MAP_RECEIVED));
+
 
 
     }
 
     //TODO call these functions when we want to start activity, send a message etc...
-    
 
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, WearService.class);
-        intent.setAction(WearService.ACTION_SEND.MESSAGE.name());
-        intent.putExtra(WearService.MESSAGE, "Messaging other device!");
-        intent.putExtra(WearService.PATH, BuildConfig.W_example_path_text);
-        startService(intent);
+
+    //ON CLICK FUNCTIONS TO SEND DATA TO THE APP
+
+    public void onclick_start_wear(View view) {
+        Intent intent_start = new Intent(MainActivity.this, WearService.class);
+        intent_start.setAction(WearService.ACTION_SEND.SENDSTART.name());
+        intent_start.putExtra(WearService.START, "START");
+        startService(intent_start);
     }
+    public void onclick_up_wear(View view) {
+        Intent intent_start = new Intent(MainActivity.this, WearService.class);
+        intent_start.setAction(WearService.ACTION_SEND.SENDUP.name());
+        intent_start.putExtra(WearService.UP, "UP");
+        startService(intent_start);
+    }
+    public void onclick_down_wear(View view) {
+        Intent intent_start = new Intent(MainActivity.this, WearService.class);
+        intent_start.setAction(WearService.ACTION_SEND.SENDDOWN.name());
+        intent_start.putExtra(WearService.DOWN, "DOWN");
+        startService(intent_start);
+    }
+    public void onclick_left_wear(View view) {
+        Intent intent_start = new Intent(MainActivity.this, WearService.class);
+        intent_start.setAction(WearService.ACTION_SEND.SENDLEFT.name());
+        intent_start.putExtra(WearService.LEFT, "LEFT");
+        startService(intent_start);
+    }
+    public void onclick_right_wear(View view) {
+        Intent intent_start = new Intent(MainActivity.this, WearService.class);
+        intent_start.setAction(WearService.ACTION_SEND.SENDRIGHT.name());
+        intent_start.putExtra(WearService.RIGHT, "RIGHT");
+        startService(intent_start);
+    }
+
 
         /*public void sendStart(View view) {
         Intent intent = new Intent(this, WearService.class);

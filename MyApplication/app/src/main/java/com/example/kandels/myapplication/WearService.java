@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -33,10 +34,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.android.gms.common.Scopes.PROFILE;
+
 public class WearService extends WearableListenerService {
 
     // Tag for Logcat
     private static final String TAG = "WearService";
+    public static final String MAP = "MAP";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -67,6 +71,15 @@ public class WearService extends WearableListenerService {
             case EXAMPLE_ASSET:
                 putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_example_path_asset);
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_some_other_key, (Asset) intent.getParcelableExtra(IMAGE));
+                sendPutDataMapRequest(putDataMapRequest);
+                break;
+
+
+                //CREATING A NEW PATH FOR SENDING THE MAP
+                // I THINK THE MAP IS AN ASSET
+            case MAPSEND:
+                putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_map_path);
+                putDataMapRequest.getDataMap().putAsset(BuildConfig.W_map, (Asset) intent.getParcelableExtra(MAP) );
                 sendPutDataMapRequest(putDataMapRequest);
                 break;
             default:
@@ -172,14 +185,19 @@ public class WearService extends WearableListenerService {
                         intent.putExtra("REPLACE_THIS_WITH_A_STRING_OF_ARRAYLIST_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY", arraylist);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         break;
-                    /*case BuildConfig.W_profile_path:
-                        Log.v(TAG,"Data changed for path: " + uri);
-                        DataMap dataMap = dataMapItem.getDataMap().getDataMap(BuildConfig.W_profile_key);
-                        String username = dataMap.getString("username");
-                        intent = new Intent(MainActivity.ACTION_RECEIVE_PROFILE_INFO);
-                        intent.putExtra(MainActivity.PROFILE_USERNAME,username);
-                        bitmapFromAsset(dataMap.getAsset("photo"),intent,MainActivity.PROFILE_IMAGE);
-                        break;*/
+
+
+                        //TODO SEND DATA TO MAIN ACTIVITY to DIRECTION_RECEIVED
+                    case BuildConfig.W_start_path:
+                        break;
+                    case BuildConfig.W_up_path:
+                        break;
+                    case BuildConfig.W_down_path:
+                        break;
+                    case BuildConfig.W_left_path:
+                        break;
+                    case BuildConfig.W_right_path:
+                        break;
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
                         //Log.v(TAG,BuildConfig.W_profile_path);
@@ -239,10 +257,6 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest.getDataMap().putIntegerArrayList(BuildConfig.W_some_other_key, arrayList);
                 sendPutDataMapRequest(putDataMapRequest);
                 break;
-            case BuildConfig.W_manual_path:
-                Intent intent = new Intent(MainActivity.WEAR_DIRECTION);  //declare main app
-                intent.putExtra(MainActivity.DIRECTION, data);  //declare as well
-                LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent);
             default:
                 Log.w(TAG, "Received a message for unknown path " + path + " : " + new String(messageEvent.getData()));
         }
@@ -338,6 +352,6 @@ public class WearService extends WearableListenerService {
 
     // Constants
     public enum ACTION_SEND {
-        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET
+        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, MAPSEND
     }
 }

@@ -35,6 +35,12 @@ import java.util.List;
 
 public class WearService extends WearableListenerService {
 
+    public static final String START = "START";
+    public static final String UP = "UP";
+    public static final String DOWN = "DOWN";
+    public static final String LEFT = "LEFT";
+    public static final String RIGHT = "RIGHT";
+
     // Tag for Logcat
     private static final String TAG = "WearService";
 
@@ -68,7 +74,19 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_example_path_asset);
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_some_other_key, (Asset) intent.getParcelableExtra(IMAGE));
                 sendPutDataMapRequest(putDataMapRequest);
+                break;
 
+
+                //TODO send these values to wear app service
+            case SENDSTART:
+                break;
+            case SENDUP:
+                break;
+            case SENDDOWN:
+                break;
+            case SENDLEFT:
+                break;
+            case SENDRIGHT:
                 break;
 
             case DIRECTION:
@@ -190,6 +208,14 @@ public class WearService extends WearableListenerService {
 
                         //sending intent with direction value
                         LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent_direction);
+                        break;
+
+                    case BuildConfig.W_map_path:
+
+                        Log.v(TAG,"Data changed for path: " + uri);
+                        Asset asset_map = dataMapItem.getDataMap().getAsset(BuildConfig.W_map);
+                        intent = new Intent(MainActivity.ACTION_MAP_RECEIVED); //TO COMPLETE
+                        bitmapFromAsset(asset_map, intent, MainActivity.MAP_IMAGE);
                         break;
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
@@ -345,6 +371,6 @@ public class WearService extends WearableListenerService {
 
     // Constants
     public enum ACTION_SEND {
-        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, DIRECTION;
+        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, DIRECTION, SENDSTART, SENDUP, SENDDOWN, SENDLEFT, SENDRIGHT
     }
 }
