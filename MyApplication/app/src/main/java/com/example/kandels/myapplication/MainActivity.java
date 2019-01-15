@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private int size_one_element = 5;
     private int nb_el_width = width/size_one_element;
     private int number_square = height * width / (size_one_element * size_one_element);
+    private int map_matrix[][] = new int[height][width];
+
 
     List<Node> node_array = new ArrayList<Node>();
 
@@ -355,41 +357,42 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         sending_map_wear();
 
 
-        //TODO complete this part
+        //TODO check if it's in the oncreate or not
         //wear
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String direction_received = intent.getStringExtra(DIRECTION_RECEIVED); //public static final string direction
-                //ensuite up down etc...
-                switch (direction_received){
-                    case "START":
-                        //modify robot's position
-                        //StartMovement(view);
-                        break;
-                    case "UP":
-                        //modify robot's position
-                        //UpMovement(view);
-                        rotate(UP);
-                        break;
-                    case "DOWN":
-                        //modify robot's position
-                        //DownMovement(view);
-                        rotate(DOWN);
-                        break;
-                    case "LEFT":
-                        //modify robot's position
-                        //LeftMovement(view);
-                        rotate(LEFT);
-                        break;
-                    case "RIGHT":
-                        //modify robot's position
-                        //RightMovement(view);
-                        rotate(RIGHT);
-                        break;
 
-                }
+                //depending on direction_received value, determine where to go
+                    String direction_received = intent.getStringExtra(DIRECTION_RECEIVED);
+                    switch (direction_received){
+                         case "START":
+                            //modify robot's position
+                            //StartMovement(view);
+                            break;
+                        case "UP":
+                            //modify robot's position
+                            //UpMovement(view);
+                            rotate(UP);
+                            break;
+                        case "DOWN":
+                            //modify robot's position
+                            //DownMovement(view);
+                            rotate(DOWN);
+                            break;
+                        case "LEFT":
+                            //modify robot's position
+                            //LeftMovement(view);
+                            rotate(LEFT);
+                            break;
+                        case "RIGHT":
+                            //modify robot's position
+                            //RightMovement(view);
+                            rotate(RIGHT);
+                            break;
+                    }
             }
+
 
         }, new IntentFilter(ACTION_WEAR_DIRECTION)); //public etc...
 
@@ -551,11 +554,15 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         else if(situation == STATE_OBSTACLE){
             node.square.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
             node.State_robot = STATE_OBSTACLE;
+            //putting 2 when pass on obstacle square
+            map_matrix[get_x_from_index(index)][get_y_from_index(index)] = 2;
         }
         else if(situation == STATE_FREE){
             node.square.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
             node.setState(Node.NOT_TESTED);
             node.State_robot = STATE_FREE;
+            //putting 1 when pass on free square
+            map_matrix[get_x_from_index(index)][get_y_from_index(index)] = 1;
         }
     }
 
@@ -573,6 +580,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     void set_arrow(){
         int margin_left = get_marginLeft_from_index(position_robot);
         int margin_top = get_marginTop_from_index(position_robot);
+
         switch(orientation_robot){
             case UP : margin_left -= 8;
                 margin_top -= 0;
@@ -931,29 +939,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         }
 
     }
-
-    /*public void manual_wear_movement(String wear_direction){
-
-        switch (wear_direction){
-            View view = new View(); //dunno if I pu the button's ids or not
-            case "START":
-                StartMovement(view);
-                break;
-            case "UP":
-                UpMovement(view);
-                break;
-            case "DOWN":
-                DownMovement(view);
-                break;
-            case "LEFT":
-                LeftMovement(view);
-                break;
-            case "RIGHT":
-                RightMovement(view);
-                break;
-
-        }
-    } */
 
     //AUTOMATIC
 

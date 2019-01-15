@@ -189,14 +189,34 @@ public class WearService extends WearableListenerService {
 
                         //TODO SEND DATA TO MAIN ACTIVITY to DIRECTION_RECEIVED
                     case BuildConfig.W_start_path:
+                        DataMap dataMap_start = dataMapItem.getDataMap().getDataMap(BuildConfig.W_start_path);
+                        String start = dataMap_start.getString("START");
+                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,start);
                         break;
                     case BuildConfig.W_up_path:
+                        DataMap dataMap_up = dataMapItem.getDataMap().getDataMap(BuildConfig.W_up_path);
+                        String up = dataMap_up.getString("UP");
+                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,up);
                         break;
                     case BuildConfig.W_down_path:
+                        DataMap dataMap_down = dataMapItem.getDataMap().getDataMap(BuildConfig.W_down_path);
+                        String down = dataMap_down.getString("DOWN");
+                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,down);
                         break;
                     case BuildConfig.W_left_path:
+                        DataMap dataMap_left = dataMapItem.getDataMap().getDataMap(BuildConfig.W_left_path);
+                        String left = dataMap_left.getString("LEFT");
+                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,left);
                         break;
                     case BuildConfig.W_right_path:
+                        DataMap dataMap_right = dataMapItem.getDataMap().getDataMap(BuildConfig.W_right_path);
+                        String right = dataMap_right.getString("RIGHT");
+                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,right);
                         break;
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);

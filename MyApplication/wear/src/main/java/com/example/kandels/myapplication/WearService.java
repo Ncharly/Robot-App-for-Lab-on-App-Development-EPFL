@@ -79,6 +79,9 @@ public class WearService extends WearableListenerService {
 
                 //TODO send these values to wear app service
             case SENDSTART:
+                String message_start = intent.getStringExtra(MESSAGE);
+                if (message_start == null) message_start = "";
+                sendMessage(message_start, intent.getStringExtra(PATH));
                 break;
             case SENDUP:
                 break;
@@ -201,14 +204,14 @@ public class WearService extends WearableListenerService {
                         break;
 
                         //TODO: pass movement functions to watch, and check if correct
-                    case BuildConfig.W_manual_path:
+                    /*case BuildConfig.W_manual_path:
                         Log.v(TAG,"Data changed for path: " + uri);
                         Intent intent_direction = new Intent(MainActivity.DIRECTION);
                         intent_direction.putExtra(MainActivity.DIRECTION, MESSAGE); //DUNNO what to put
 
                         //sending intent with direction value
                         LocalBroadcastManager.getInstance(WearService.this).sendBroadcast(intent_direction);
-                        break;
+                        break; */
 
                     case BuildConfig.W_map_path:
 
