@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "967298002510",
+    "firebase_url": "https://myapplication-b7019.firebaseio.com",
+    "project_id": "myapplication-b7019",
+    "storage_bucket": "myapplication-b7019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967298002510:android:86580baa8392a219",
+        "android_client_info": {
+          "package_name": "com.example.kandels.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967298002510-i0jahp8fg5gsbm69bnr9eiasq964og2r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kandels.myapplication",
+            "certificate_hash": "641b225b955578eb50e632c6ee66c7882ba82432"
+          }
+        },
+        {
+          "client_id": "967298002510-jkl7bhu06ovljoktqo217m2rg6d7cr1n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_U4ieiQ_1on_zSSQiYTAVORq29OCtZhs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "967298002510-lg0o4kg0cq7n0bl5iq8lrcnpt9v7uifd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

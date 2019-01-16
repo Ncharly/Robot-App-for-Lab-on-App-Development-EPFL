@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -121,10 +122,11 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private FrameLayout map;
     private int width = 750;
     private int height = 800;
-    private int size_one_element = 5;
+    private int size_one_element = 10;
     private int nb_el_width = width/size_one_element;
+    private int nb_el_height = height/size_one_element;
     private int number_square = height * width / (size_one_element * size_one_element);
-    private int map_matrix[][] = new int[height][width];
+    private int map_matrix[][] = new int[nb_el_height][nb_el_width];
 
 
     List<Node> node_array = new ArrayList<Node>();
@@ -138,7 +140,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     ImageView robot;
     int orientation_robot = LEFT;
-    int position_initial = 12075;
+    //int position_initial = 12075;
+    int position_initial = number_square/2 - nb_el_width/2;
     int position_robot = position_initial;
 
     int total_mass = 0;
@@ -269,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_tutorial:
+            case R.id.action_save:
                 saveMapFirebase();
                 return true;
             default:
@@ -405,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                     String direction_received = intent.getStringExtra(DIRECTION_RECEIVED);
                     switch (direction_received){
                          case "START":
-                             mRunning = true;
+                             StartMovement(findViewById(R.id.button_start));
                             break;
                         case "UP":
                             rotate(UP);
@@ -421,7 +424,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                             break;
                         case "BACK":
                             //TODO: check what function to call here
-                            //GoBack();
+                            Button v = new Button(context);
+                            GoBack(v);
+
                             break;
                         default:
                             Log.v(TAG, "Direction not transmitted! ");
@@ -839,7 +844,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     // MANUAL
 
-    //TODO: put these functions in the fragments automatic and manual
+    //I CHANGED THE ON CLICK FUNCTIONS
 
     public void UpMovement(View view) {
         Button button_up = findViewById(R.id.button_up);
@@ -853,8 +858,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void DownMovement(View view) {
         Button button_down = findViewById(R.id.button_down);
-        view.setBackgroundColor(Color.YELLOW);
-        button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //view.setBackgroundColor(Color.YELLOW);
+        //button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         byte data[] ={2}; // back command
 
         rotate(DOWN);
@@ -869,8 +874,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void RightMovement(View view) {
         Button button_left = findViewById(R.id.button_right);
-        view.setBackgroundColor(Color.YELLOW);
-        button_left.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //view.setBackgroundColor(Color.YELLOW);
+        //button_left.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         //   TextView statusView = findViewById(R.id.status);
         //   statusView.setText("Right");
         byte data[] ={3}; // hard right
@@ -888,8 +893,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void LeftMovement(View view) {
         Button button_right = findViewById(R.id.button_left);
-        view.setBackgroundColor(Color.YELLOW);
-        button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //view.setBackgroundColor(Color.YELLOW);
+        //button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
         //  TextView statusView = findViewById(R.id.status);
         //  statusView.setText("Left");
         byte data[] ={4}; // left command
@@ -934,23 +939,6 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void GoBack(View view) {
 
-        //Adding a slide for backwards movement, not sure if correct
-        //Call on onclick, slides, you switch value and slides again
-        //To be completed and check if necessary
-        View view_button = findViewById(R.id.button_go_back);
-        ObjectAnimator animator;
-        if(go_back_hidden){
-            animator = ObjectAnimator.ofFloat(view_button, "translationX", 60);
-        } else {
-            animator = ObjectAnimator.ofFloat(view_button, "translationX", 0);
-        }
-        go_back_hidden = !go_back_hidden;
-        animator.setDuration(700);
-        animator.start();
-
-
-
-
         if(button_start != null){
             button_go_back = findViewById(R.id.button_go_back);
             if(go_back){
@@ -972,14 +960,21 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void StartMovement(View view) {
         button_start = findViewById(R.id.button_start);
+        Intent intent_start = new Intent(MainActivity.this, WearService.class);
+        intent_start.setAction(WearService.ACTION_SEND.STARTSEND.name());
+
         if(button_start.getText()==getString(R.string.Start)){
             mRunning = true;
             view.setBackgroundColor(Color.RED);
             button_start.setText(getString(R.string.Stop));
+            intent_start.putExtra(WearService.START, "STOP");
         }
         else{
             mRunning = false;
+            button_start.setText(getString(R.string.Start));
+            intent_start.putExtra(WearService.START, "START");
 
+            /*
             Button button_right = findViewById(R.id.button_right);
             button_right.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
 
@@ -990,12 +985,12 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
 
             Button button_down = findViewById(R.id.button_down);
-            button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+            button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark)); */
 
-            view.setBackgroundColor(getResources().getColor(R.color.Orange));
-            button_start.setText(getString(R.string.Start));
+            //view.setBackgroundColor(getResources().getColor(R.color.Orange));
+            view.setBackgroundColor(getResources().getColor(R.color.WHITE));
         }
-
+        startService(intent_start);
     }
 
     //AUTOMATIC
@@ -1006,15 +1001,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
 
         if(button_start.getText()==getString(R.string.Start)){
-            view.setBackgroundColor(Color.RED);
-            //view.setBackgroundColor(Drawable.);
+            //view.setBackgroundColor(Color.RED);
             button_start.setText(getString(R.string.Stop));
             mRunning = true;
             //automatic_exploration(position_robot); //start the automatic exploration mode with the position of the
                                                     // robot: maybe change the position
         }
         else {
-            view.setBackgroundColor(getResources().getColor(R.color.Orange));
+            //view.setBackgroundColor(getResources().getColor(R.color.Orange));
             button_start.setText(getString(R.string.Start));
             mRunning = false;
         }
@@ -1162,6 +1156,22 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     public void automatic_go_back(View view) {
+
+
+       /*
+        View view_button = findViewById(R.id.button_go_back_automatic);
+        ObjectAnimator animator;
+        if(go_back_hidden){
+            animator = ObjectAnimator.ofFloat(view_button, "translationX", 100);
+        } else {
+            animator = ObjectAnimator.ofFloat(view_button, "translationX", 0);
+        }
+        go_back_hidden = !go_back_hidden;
+        animator.setDuration(700);
+        animator.start();
+        */
+
+
        if(button_start != null) {
            button_go_back = findViewById(R.id.button_go_back_automatic);
            if(go_back){
@@ -1184,7 +1194,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public void start_activity_wear (){
         Intent intentWear = new Intent(MainActivity.this,WearService.class);
         intentWear.setAction(WearService.ACTION_SEND.STARTACTIVITY.name());
-        //intentWear.putExtra(WearService.ACTIVITY_TO_START, "START_WEAR_ACTIVITY");
+        intentWear.putExtra(WearService.ACTIVITY_TO_START, "START_WEAR_ACTIVITY");
         startService(intentWear);
 
     }

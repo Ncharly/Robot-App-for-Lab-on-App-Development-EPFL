@@ -7,4 +7,8 @@
     <color name="Yellow">#ffff00</color>
     <color name="OrangeDark">#ff8000</color>
     <color name="RED">#f33333</color>
+    <color name="WHITE">#ffffff</color>
+    <color name="LBLUE">#59d5fe</color>
+    <color name="DBLUE">#0101d3</color>
+
 </resources>

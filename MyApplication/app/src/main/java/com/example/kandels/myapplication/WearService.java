@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.kandels.myapplication.BuildConfig.W_start_path;
 import static com.google.android.gms.common.Scopes.PROFILE;
 
 public class WearService extends WearableListenerService {
@@ -42,6 +43,8 @@ public class WearService extends WearableListenerService {
     // Tag for Logcat
     private static final String TAG = "WearService";
     public static final String MAP = "MAP";
+    public static final String START = "START";
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -58,6 +61,7 @@ public class WearService extends WearableListenerService {
                 String activity = intent.getStringExtra(ACTIVITY_TO_START);
                 sendMessage(activity, BuildConfig.W_path_start_activity);
                 break;
+
             case MESSAGE:
                 String message = intent.getStringExtra(MESSAGE);
                 if (message == null) message = "";
@@ -82,6 +86,15 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest.getDataMap().putAsset(BuildConfig.W_map, (Asset) intent.getParcelableExtra(MAP) );
                 sendPutDataMapRequest(putDataMapRequest);
                 break; */
+            case STARTSEND:
+                //putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_start_path);
+                //putDataMapRequest.(BuildConfig.W_start_key, (Asset) intent.getParcelableExtra(START) );
+                //sendPutDataMapRequest(putDataMapRequest);
+                String start = intent.getStringExtra(START);
+                if (start == null) start = "NADA";
+                sendMessage(start, BuildConfig.W_start_path);
+                break;
+
             default:
                 Log.w(TAG, "Unknown action");
                 break;
@@ -382,6 +395,6 @@ public class WearService extends WearableListenerService {
 
     // Constants
     public enum ACTION_SEND {
-        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, MAPSEND
+        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, MAPSEND, STARTSEND
     }
 }

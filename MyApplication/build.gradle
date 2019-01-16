@@ -35,6 +35,8 @@ allprojects {
                 a_key : "a_value",
                 some_other_key : "some_other_value",
                 direction_path : "/direction",
+                start_path : "/start",
+                star_key : "/start_key"
 
         ]
     }

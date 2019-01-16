@@ -238,6 +238,9 @@ public class WearService extends WearableListenerService {
                         intent = new Intent(MainActivity.ACTION_MAP_RECEIVED); //TO COMPLETE
                         bitmapFromAsset(asset_map, intent, MainActivity.MAP_IMAGE);
                         break; */
+
+
+
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
                         //Log.v(TAG,BuildConfig.W_profile_path);
@@ -262,8 +265,9 @@ public class WearService extends WearableListenerService {
                 + " : \"" + data
                 + "\", from node " + messageEvent.getSourceNodeId());
 
+        //&& data.equals(BuildConfig.W_mainactivity)
         if (path.equals(BuildConfig.W_path_start_activity)
-                && data.equals(BuildConfig.W_mainactivity)) {
+                ) {
             startActivity(new Intent(this, MainActivity.class));
         }
 
@@ -284,6 +288,7 @@ public class WearService extends WearableListenerService {
                 startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(startIntent);
                 break;
+
             case BuildConfig.W_path_acknowledge:
                 Log.v(TAG, "Received acknowledgment");
                 break;
@@ -297,6 +302,14 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest.getDataMap().putIntegerArrayList(BuildConfig.W_some_other_key, arrayList);
                 sendPutDataMapRequest(putDataMapRequest);
                 break;
+
+            case BuildConfig.W_start_path:
+                String start_wear = data;
+                Intent intent = new Intent(MainActivity.ACTION_START);
+                intent.putExtra(MainActivity.START_RECEIVED, start_wear);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                break;
+
             default:
                 Log.w(TAG, "Received a message for unknown path " + path + " : " + new String(messageEvent.getData()));
         }
