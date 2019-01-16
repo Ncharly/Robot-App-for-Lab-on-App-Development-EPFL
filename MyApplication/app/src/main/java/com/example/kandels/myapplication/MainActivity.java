@@ -40,6 +40,7 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -576,7 +577,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             params.topMargin = top_margin;
             params.leftMargin = left_margin;
             Log.i("index square", Integer.toString(i));
-            update_mass(i, 1);
+            //update_mass(i, 1);
             Node node = new Node(i, get_x_from_index(i), get_y_from_index(i), square);
             node_array.add(i, node);
             map.addView(square, params);
@@ -600,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             node.State_robot = STATE_OBSTACLE;
             //putting 2 when pass on obstacle square
             map_matrix[get_x_from_index(index)][get_y_from_index(index)] = 2;
-            update_mass(index, -1);
+            update_mass(index, 1);
         }
         else if(situation == STATE_FREE){
             node.square.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
@@ -608,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             node.State_robot = STATE_FREE;
             //putting 1 when pass on free square
             map_matrix[get_x_from_index(index)][get_y_from_index(index)] = 1;
-            update_mass(index, -1);
+            update_mass(index, 1);
         }
     }
 
@@ -628,17 +629,17 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         int margin_top = get_marginTop_from_index(position_robot);
 
         switch(orientation_robot){
-            case UP : margin_left -= 8;
+            case UP : margin_left -= 5;
                 margin_top -= 0;
                 break;
-            case RIGHT : margin_left -= 14;
-                margin_top -= 7;
+            case RIGHT : margin_left -= 11;
+                margin_top -= 5;
                 break;
-            case DOWN : margin_left -= 7;
-                margin_top -= 13;
+            case DOWN : margin_left -= 5;
+                margin_top -= 9;
                 break;
             case LEFT : margin_left -= 1;
-                margin_top -= 6;
+                margin_top -= 4;
                 break;
         }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -738,8 +739,8 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                        index_smalest_F = i;
                    }else if(new_F == smallest_F){
                        int[] index_array = new int[2];
-                       index_array[0] = index_smalest_F;
-                       index_array[1] = i;
+                       index_array[0] = index_neighbor[index_smalest_F];
+                       index_array[1] = index_neighbor[i];
                        int index_small = next_free(index_array, index_cur , true);
                        if(index_array[1] == index_small){
                            index_smalest_F = i;
@@ -784,7 +785,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         rotate(direction);
         position_robot = pos;
         set_arrow();
-        change_state_square(pos, STATE_FREE);
+        if(node_array.get(pos).State_robot == STATE_UNKNOWN){
+            change_state_square(pos, STATE_FREE);
+        }
     }
 
     void generate_obstacle(int pos, int direction){
@@ -988,7 +991,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
             button_down.setBackgroundColor(getResources().getColor(R.color.OrangeDark)); */
 
             //view.setBackgroundColor(getResources().getColor(R.color.Orange));
-            view.setBackgroundColor(getResources().getColor(R.color.WHITE));
+            view.setBackgroundColor(getResources().getColor(R.color.Yellow));
         }
         startService(intent_start);
     }
@@ -1076,71 +1079,92 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     public int next_free(int[] free_element, int pos_cur, boolean center_ini){
         int x_center;
         int y_center;
+        int difference_x;
+        int difference_y;
         if(center_ini){
             x_center = get_x_from_index(position_initial);
             y_center = get_y_from_index(position_initial);
+            difference_x = get_x_from_index(pos_cur) - x_center;
+            difference_y = get_y_from_index(pos_cur) - y_center;
         }else{
+            int x_ini = get_x_from_index(position_initial);
+            int y_ini = get_y_from_index(position_initial);
             x_center = x_mass/total_mass;
             y_center = y_mass/total_mass;
+            int difx = x_center - x_ini;
+            int dify = y_center - y_ini;
+            if(difx > 0){
+              difference_x = 1;
+            }
+            else{
+                difference_x = -1;
+            }
+            if(dify > 0){
+                difference_y = 1;
+            }else{
+                difference_y = -1;
+            }
+            if(Math.abs(difx) > Math.abs(dify)){
+                difference_x *=2;
+            }else{
+                difference_y *=2;
+            }
         }
-
-        int difference_x = x_center - get_x_from_index(pos_cur);
-        int difference_y = y_center - get_y_from_index(pos_cur);
         int[] neighbor_classed = new int[4];
         if(Math.abs(difference_x) > Math.abs(difference_y)){
             if(difference_x >= 0){
-                neighbor_classed[0] = get_neighbor(pos_cur, RIGHT);
-                neighbor_classed[3] = get_neighbor(pos_cur, LEFT);
+                neighbor_classed[3] = get_neighbor(pos_cur, RIGHT);
+                neighbor_classed[0] = get_neighbor(pos_cur, LEFT);
                 if(difference_y >0){
-                    neighbor_classed[1] = get_neighbor(pos_cur, DOWN);
-                    neighbor_classed[2] = get_neighbor(pos_cur, UP);
-                }else{
-                    neighbor_classed[1] = get_neighbor(pos_cur, UP);
                     neighbor_classed[2] = get_neighbor(pos_cur, DOWN);
+                    neighbor_classed[1] = get_neighbor(pos_cur, UP);
+                }else{
+                    neighbor_classed[2] = get_neighbor(pos_cur, UP);
+                    neighbor_classed[1] = get_neighbor(pos_cur, DOWN);
                 }
             }else {
-                neighbor_classed[0] = get_neighbor(pos_cur, LEFT);
-                neighbor_classed[3] = get_neighbor(pos_cur, RIGHT);
+                neighbor_classed[3] = get_neighbor(pos_cur, LEFT);
+                neighbor_classed[0] = get_neighbor(pos_cur, RIGHT);
                 if (difference_y > 0) {
-                    neighbor_classed[1] = get_neighbor(pos_cur, DOWN);
-                    neighbor_classed[2] = get_neighbor(pos_cur, UP);
-                } else {
-                    neighbor_classed[1] = get_neighbor(pos_cur, UP);
                     neighbor_classed[2] = get_neighbor(pos_cur, DOWN);
+                    neighbor_classed[1] = get_neighbor(pos_cur, UP);
+                } else {
+                    neighbor_classed[2] = get_neighbor(pos_cur, UP);
+                    neighbor_classed[1] = get_neighbor(pos_cur, DOWN);
                 }
             }
 
         }else{
             if(difference_y >= 0){
-                neighbor_classed[0] = get_neighbor(pos_cur, DOWN);
-                neighbor_classed[3] = get_neighbor(pos_cur, UP);
+                neighbor_classed[3] = get_neighbor(pos_cur, DOWN);
+                neighbor_classed[0] = get_neighbor(pos_cur, UP);
                 if(difference_x >0){
-                    neighbor_classed[1] = get_neighbor(pos_cur, RIGHT);
-                    neighbor_classed[2] = get_neighbor(pos_cur, LEFT);
-                }else{
-                    neighbor_classed[1] = get_neighbor(pos_cur, LEFT);
                     neighbor_classed[2] = get_neighbor(pos_cur, RIGHT);
+                    neighbor_classed[1] = get_neighbor(pos_cur, LEFT);
+                }else{
+                    neighbor_classed[2] = get_neighbor(pos_cur, LEFT);
+                    neighbor_classed[1] = get_neighbor(pos_cur, RIGHT);
                 }
             }else {
-                neighbor_classed[0] = get_neighbor(pos_cur, UP);
-                neighbor_classed[3] = get_neighbor(pos_cur, DOWN);
+                neighbor_classed[3] = get_neighbor(pos_cur, UP);
+                neighbor_classed[0] = get_neighbor(pos_cur, DOWN);
                 if (difference_x > 0) {
-                    neighbor_classed[1] = get_neighbor(pos_cur, RIGHT);
-                    neighbor_classed[2] = get_neighbor(pos_cur, LEFT);
-                } else {
-                    neighbor_classed[1] = get_neighbor(pos_cur, LEFT);
                     neighbor_classed[2] = get_neighbor(pos_cur, RIGHT);
+                    neighbor_classed[1] = get_neighbor(pos_cur, LEFT);
+                } else {
+                    neighbor_classed[2] = get_neighbor(pos_cur, LEFT);
+                    neighbor_classed[1] = get_neighbor(pos_cur, RIGHT);
                 }
             }
 
         }
 
-        int i = 3;
-        while(i < 0 && Arrays.asList(free_element).contains(neighbor_classed[i]) == false){
-            i--;
+        int i = 0;
+        while(i < 4 && ArrayUtils.contains(free_element, neighbor_classed[i])  == false){
+            i++;
         }
-        if(i == -1){
-            return neighbor_classed[0];
+        if(i == 4){
+            return neighbor_classed[3];
         }else{
             return neighbor_classed[i];
         }
