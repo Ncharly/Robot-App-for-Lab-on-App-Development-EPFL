@@ -222,13 +222,6 @@ public class WearService extends WearableListenerService {
                     //GETTING THE MESSAGE FROM THE PULSED BUTTON
                     // I THINK WE ONLY NEED ONE CASE
 
-                    case BuildConfig.W_direction_path:
-                        DataMap dataMap_right = dataMapItem.getDataMap().getDataMap(BuildConfig.W_direction_path);
-                        String direction_wear = dataMap_right.getString(MESSAGE);
-                        intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
-                        intent.putExtra(MainActivity.DIRECTION_RECEIVED,direction_wear);
-                        break;
-
                     default:
                         Log.v(TAG, "Data changed for unhandled path: " + uri);
                         //Log.v(TAG,BuildConfig.W_profile_path);
@@ -287,6 +280,12 @@ public class WearService extends WearableListenerService {
                 putDataMapRequest.getDataMap().putInt(BuildConfig.W_a_key, 42);
                 putDataMapRequest.getDataMap().putIntegerArrayList(BuildConfig.W_some_other_key, arrayList);
                 sendPutDataMapRequest(putDataMapRequest);
+                break;
+            case BuildConfig.W_direction_path:
+                String direction_wear = data;
+                Intent intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
+                intent.putExtra(MainActivity.DIRECTION_RECEIVED,direction_wear);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 break;
             default:
                 Log.w(TAG, "Received a message for unknown path " + path + " : " + new String(messageEvent.getData()));

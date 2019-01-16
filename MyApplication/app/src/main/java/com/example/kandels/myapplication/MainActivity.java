@@ -391,6 +391,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
         //TODO: complete wear functions
         //sending_map_wear();
 
+        //Sending start activity wear
+        start_activity_wear ();
+
 
         //TODO check if it's in the oncreate or not
         //wear
@@ -840,8 +843,9 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
     public void UpMovement(View view) {
         Button button_up = findViewById(R.id.button_up);
-        view.setBackgroundColor(Color.YELLOW);
-        button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //view.setBackgroundColor(Color.YELLOW);
+        //button_up.setBackgroundColor(getResources().getColor(R.color.OrangeDark));
+        //button_up.setBackground(getResources().getDrawable(R.id.button_up));
         byte data[] ={1}; // back command
         rotate(UP);
 
@@ -1175,6 +1179,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
                go_back_ready = true;
            }
        }
+    }
+
+    public void start_activity_wear (){
+        Intent intentWear = new Intent(MainActivity.this,WearService.class);
+        intentWear.setAction(WearService.ACTION_SEND.STARTACTIVITY.name());
+        //intentWear.putExtra(WearService.ACTIVITY_TO_START, "START_WEAR_ACTIVITY");
+        startService(intentWear);
+
     }
 
 
