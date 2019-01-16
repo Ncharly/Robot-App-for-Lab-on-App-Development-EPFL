@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "507240117340",
-    "firebase_url": "https://myapplication-7f0a5.firebaseio.com",
-    "project_id": "myapplication-7f0a5",
-    "storage_bucket": "myapplication-7f0a5.appspot.com"
+    "project_number": "967298002510",
+    "firebase_url": "https://myapplication-b7019.firebaseio.com",
+    "project_id": "myapplication-b7019",
+    "storage_bucket": "myapplication-b7019.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:507240117340:android:86580baa8392a219",
+        "mobilesdk_app_id": "1:967298002510:android:86580baa8392a219",
         "android_client_info": {
           "package_name": "com.example.kandels.myapplication"
         }
       },
       "oauth_client": [
         {
-          "client_id": "507240117340-5r0r8h58frjbci93nniql5oi7a481ek4.apps.googleusercontent.com",
+          "client_id": "967298002510-i0jahp8fg5gsbm69bnr9eiasq964og2r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.kandels.myapplication",
-            "certificate_hash": "c9d7f81bda9b5661c1e82707a21a8782de0bb048"
+            "certificate_hash": "641b225b955578eb50e632c6ee66c7882ba82432"
           }
         },
         {
-          "client_id": "507240117340-bttid6507sl74i514oghr4omd3l79d13.apps.googleusercontent.com",
+          "client_id": "967298002510-jkl7bhu06ovljoktqo217m2rg6d7cr1n.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDi2gJAFIk020hdtWXA2KxAaUdvV7tDipg"
+          "current_key": "AIzaSyD_U4ieiQ_1on_zSSQiYTAVORq29OCtZhs"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "507240117340-sq2mi6qq363so50f96a8dipami45mkig.apps.googleusercontent.com",
+              "client_id": "967298002510-lg0o4kg0cq7n0bl5iq8lrcnpt9v7uifd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

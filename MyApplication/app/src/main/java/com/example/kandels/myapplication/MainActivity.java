@@ -19,9 +19,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
@@ -41,7 +46,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -66,15 +73,14 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     private Toast loading_map;
 
 
-
     //FIREBASE
 
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference myRef;
+    private static final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private static final DatabaseReference mapsGetRef = database.getReference("maps");
 
-    private FirebaseUser firebaseUser;
-    private FirebaseAuth mAuth;
+    private static final DatabaseReference mapsRef = mapsGetRef.push();
 
+    public int random_Number;
 
     private ProgressBar pgsBar;
     private Button showbtn, hidebtn;
@@ -255,27 +261,48 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_tutorial:
+                saveMapFirebase();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void saveMapFirebase() {
+        mapsRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                mutableData.child("matrix").setValue(map_matrix);
+                return (Transaction.success(mutableData));
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+            }
+        });
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         boolean bError = true;
         mRunning = false;
 
-        // FIREBASE
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = firebaseDatabase.getReference().child("Path");
-
-        mAuth = FirebaseAuth.getInstance();
-        firebaseUser = mAuth.getCurrentUser();
-
-     /*   if (firebaseUser != null) {
-        mUsername = firebaseUser.getDisplayName();
-    }
-
-        if (getIntent().hasExtra("Selected Club")) {
-        selectedClub = getIntent().getStringExtra("Selected Club");
-    }*/
+        random_Number = 1;
 
 
         /*
