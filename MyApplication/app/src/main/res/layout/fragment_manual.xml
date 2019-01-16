@@ -27,14 +27,16 @@
                 android:padding="1sp">
 
                 <Button
-                    android:id="@+id/button_up"
+                    android:id="@+id/button_start"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/OrangeDark"
-                    android:onClick="UpMovement"
-                    android:text="@string/Up"
+                    android:background="@android:color/white"
+                    android:onClick="StartMovement"
+                    android:text="@string/Start"
                     android:textSize="24sp" />
+
+
             </FrameLayout>
 
             <FrameLayout
@@ -45,14 +47,14 @@
                 android:padding="1sp">
 
                 <Button
-                    android:id="@+id/button_start"
+                    android:id="@+id/button_up"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/Orange"
-                    android:onClick="StartMovement"
-                    android:text="@string/Start"
-                    android:textSize="24sp" />
+                    android:background="@android:color/holo_red_dark"
+                    android:onClick="UpMovement"
+                    android:text="@string/Up"
+                    android:textSize="30sp" />
             </FrameLayout>
 
             <FrameLayout
@@ -67,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/Yellow"
+                    android:background="@android:color/white"
                     android:onClick="GoBack"
                     android:text="@string/Go_Back"
                     android:textSize="24sp" />
@@ -89,14 +91,15 @@
                 android:padding="1sp">
 
                 <Button
-                    android:id="@+id/button_down"
+                    android:id="@+id/button_left"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/OrangeDark"
-                    android:onClick="DownMovement"
-                    android:text="@string/Down"
-                    android:textSize="24sp" />
+                    android:background="@android:color/holo_red_dark"
+                    android:onClick="LeftMovement"
+                    android:text="@string/Left"
+                    android:textSize="30sp" />
+
             </FrameLayout>
 
             <FrameLayout
@@ -107,14 +110,16 @@
                 android:padding="1sp">
 
                 <Button
-                    android:id="@+id/button_left"
+                    android:id="@+id/button_down"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/OrangeDark"
-                    android:onClick="LeftMovement"
-                    android:text="@string/Left"
-                    android:textSize="24sp" />
+                    android:background="@android:color/holo_red_dark"
+                    android:onClick="DownMovement"
+                    android:text="@string/Down"
+                    android:textSize="30sp" />
+
+
             </FrameLayout>
 
             <FrameLayout
@@ -129,10 +134,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/OrangeDark"
+                    android:background="@android:color/holo_red_dark"
                     android:onClick="RightMovement"
                     android:text="@string/Right"
-                    android:textSize="24sp" />
+                    android:textSize="30sp" />
             </FrameLayout>
 
         </LinearLayout>
