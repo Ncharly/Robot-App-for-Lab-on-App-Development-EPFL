@@ -35,11 +35,7 @@ allprojects {
                 a_key : "a_value",
                 some_other_key : "some_other_value",
                 direction_path : "/direction",
-                start_path : "/start",
-                up_path : "/up",
-                down_path : "/down",
-                left_path : "/left",
-                right_path : "/right"
+
         ]
     }
 

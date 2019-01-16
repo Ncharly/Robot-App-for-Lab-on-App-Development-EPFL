@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -976,6 +978,7 @@ public class MainActivity extends AppCompatActivity implements ManualFragment.On
 
         if(button_start.getText()==getString(R.string.Start)){
             view.setBackgroundColor(Color.RED);
+            //view.setBackgroundColor(Drawable.);
             button_start.setText(getString(R.string.Stop));
             mRunning = true;
             //automatic_exploration(position_robot); //start the automatic exploration mode with the position of the

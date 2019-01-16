@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
-                android:background="@android:color/holo_blue_dark"
+                android:background="@android:color/white"
                 android:padding="1sp">
 
                 <Button
@@ -51,9 +51,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@android:color/holo_red_dark"
+                    android:rotation="270"
+                    android:background="@drawable/arrow_image_2"
                     android:onClick="UpMovement"
                     android:text="@string/Up"
+                    android:scaleY="0.7"
+                    android:scaleX="0.65"
                     android:textSize="30sp" />
             </FrameLayout>
 
@@ -61,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
-                android:background="@android:color/holo_blue_dark"
+                android:background="@android:color/white"
                 android:padding="1sp">
 
                 <Button
@@ -87,7 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
+                android:background="@android:color/white"
                 android:padding="1sp">
 
                 <Button
@@ -95,7 +98,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@android:color/holo_red_dark"
+                    android:background="@drawable/arrow_image_2"
+                    android:rotation="180"
+                    android:scaleY="0.7"
+                    android:scaleX="0.65"
                     android:onClick="LeftMovement"
                     android:text="@string/Left"
                     android:textSize="30sp" />
@@ -106,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
+                android:background="@android:color/white"
                 android:padding="1sp">
 
                 <Button
@@ -114,7 +120,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@android:color/holo_red_dark"
+                    android:background="@drawable/arrow_image_2"
+                    android:rotation="90"
+                    android:scaleY="0.7"
+                    android:scaleX="0.65"
                     android:onClick="DownMovement"
                     android:text="@string/Down"
                     android:textSize="30sp" />
@@ -126,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
+                android:background="@android:color/white"
                 android:padding="1sp">
 
                 <Button
@@ -134,7 +143,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@android:color/holo_red_dark"
+                    android:background="@drawable/arrow_image_2"
+                    android:scaleY="0.7"
+                    android:scaleX="0.65"
                     android:onClick="RightMovement"
                     android:text="@string/Right"
                     android:textSize="30sp" />

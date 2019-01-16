@@ -223,7 +223,7 @@ public class WearService extends WearableListenerService {
                     // I THINK WE ONLY NEED ONE CASE
 
                     case BuildConfig.W_direction_path:
-                        DataMap dataMap_right = dataMapItem.getDataMap().getDataMap(BuildConfig.W_right_path);
+                        DataMap dataMap_right = dataMapItem.getDataMap().getDataMap(BuildConfig.W_direction_path);
                         String direction_wear = dataMap_right.getString(MESSAGE);
                         intent = new Intent(MainActivity.ACTION_WEAR_DIRECTION);
                         intent.putExtra(MainActivity.DIRECTION_RECEIVED,direction_wear);
